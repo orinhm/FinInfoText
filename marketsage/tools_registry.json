@@ -1,0 +1,34 @@
+{
+  "sources": [
+    {
+      "name": "ceo_ca_nfg",
+      "type": "scraper",
+      "module": "nfgc",
+      "function": "scrape_channel",
+      "args": {"channel": "nfg"},
+      "sectors": ["gold_mining"],
+      "tickers": ["NFG"],
+      "registered_at": "2026-04-24T15:58:00+03:00"
+    },
+    {
+      "name": "ceo_ca_nfgc_us",
+      "type": "scraper",
+      "module": "nfgc",
+      "function": "scrape_channel",
+      "args": {"channel": "NFGC.US"},
+      "sectors": ["gold_mining"],
+      "tickers": ["NFGC.US"],
+      "registered_at": "2026-04-24T15:58:00+03:00"
+    },
+    {
+      "name": "newfoundgold_news",
+      "type": "scraper",
+      "module": "nfgc",
+      "function": "scrape_nfg_news",
+      "args": {},
+      "sectors": ["gold_mining"],
+      "tickers": ["NFG", "NFGC.US"],
+      "registered_at": "2026-04-24T15:58:00+03:00"
+    }
+  ]
+}

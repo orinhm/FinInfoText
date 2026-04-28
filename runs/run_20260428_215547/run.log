@@ -1,0 +1,72 @@
+21:55:47 | Run directory: /home/ori/projects/FinInfoText/runs/run_20260428_215547
+21:55:47 | Log file: /home/ori/projects/FinInfoText/runs/run_20260428_215547/run.log
+21:55:48 | 
+21:55:48 | ╔════════════════════════════════════════════════════════════════════╗
+21:55:48 | ║  MarketSage (Tool Mode) — 2026-04-28 21:55:48                         ║
+21:55:48 | ╚════════════════════════════════════════════════════════════════════╝
+21:55:48 | 
+21:55:48 | USER REQUEST:
+21:55:48 | List all tools you have, and then list what's in the vault.
+21:55:48 | 
+21:55:48 | CONFIGURATION:
+21:55:48 |   LLM provider:      gemini
+21:55:48 |   LLM model:         gemini-3.1-pro-preview
+21:55:48 |   Temperature:       1.0
+21:55:48 |   Max tokens:        8000
+21:55:48 |   Run directory:     /home/ori/projects/FinInfoText/runs/run_20260428_215547
+21:55:48 | 
+21:55:48 | System prompt: 5372 chars
+21:55:48 | 
+21:55:48 | ══════════════════════════════════════════════════════════════════════
+21:55:48 | ▸ Starting tool-based analysis...
+21:55:48 | ══════════════════════════════════════════════════════════════════════
+21:55:48 | 
+21:55:48 | ──────────────────────────────────────────────────────────────────────
+21:55:48 | [LLM #1] Iteration 1 — gemini / gemini-3.1-pro-preview
+21:55:48 | ──────────────────────────────────────────────────────────────────────
+21:55:48 | [LLM #1] SYSTEM PROMPT (5372 chars)
+21:55:48 | [LLM #1] USER MESSAGE (59 chars)
+21:55:52 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:55:52 | [LLM #1] API call completed in 4.5s (attempt 1)
+21:55:52 | [LLM #1] Model requested 2 tool call(s)
+21:55:52 | 
+21:55:52 |   ┌─ Tool Call #1: list_available_scrapers
+21:55:52 |   │  Args: {}
+21:55:52 |   🔧 Tool: list_available_scrapers()
+21:55:52 |   │  Result: 480 chars (0.0s)
+21:55:52 |   └─ Done: list_available_scrapers
+21:55:52 | 
+21:55:52 |   ┌─ Tool Call #2: list_vault_contents
+21:55:52 |   │  Args: {'path': ''}
+21:55:52 |   🔧 Tool: list_vault_contents(/home/ori/projects/FinInfoText/vault)
+21:55:52 |   │  Result: 100 chars (0.0s)
+21:55:52 |   └─ Done: list_vault_contents
+21:55:52 | 
+21:55:52 | ──────────────────────────────────────────────────────────────────────
+21:55:52 | [LLM #2] Iteration 2 — gemini / gemini-3.1-pro-preview
+21:55:52 | ──────────────────────────────────────────────────────────────────────
+21:55:55 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:55:55 | [LLM #2] API call completed in 3.0s (attempt 1)
+21:55:55 | [LLM #2] Model requested 1 tool call(s)
+21:55:55 | 
+21:55:55 |   ┌─ Tool Call #3: list_vault_contents
+21:55:55 |   │  Args: {'path': 'commodities'}
+21:55:55 |   🔧 Tool: list_vault_contents(/home/ori/projects/FinInfoText/vault/commodities)
+21:55:55 |   │  Result: 134 chars (0.0s)
+21:55:55 |   └─ Done: list_vault_contents
+21:55:55 | 
+21:55:55 | ──────────────────────────────────────────────────────────────────────
+21:55:55 | [LLM #3] Iteration 3 — gemini / gemini-3.1-pro-preview
+21:55:55 | ──────────────────────────────────────────────────────────────────────
+21:56:05 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:56:05 | [LLM #3] API call completed in 9.2s (attempt 1)
+21:56:05 | 
+21:56:05 | [LLM #3] FINAL RESPONSE (2854 chars)
+21:56:05 | ──────────────────────────────────────────────────────────────────────
+21:56:05 |   💾 Tool log → tool_calls.json
+21:56:05 | 
+21:56:05 | ╔════════════════════════════════════════════════════════════════════╗
+21:56:05 | ║  Run complete — 16.7s, 3 LLM calls, 3 tool calls               ║
+21:56:05 | ╚════════════════════════════════════════════════════════════════════╝
+21:56:05 | 
+21:56:05 | Final analysis saved to: /home/ori/projects/FinInfoText/runs/run_20260428_215547/final_analysis.md

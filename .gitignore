@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+vault/_reports/
+marketsage/settings.yaml
+scrape_failures.json

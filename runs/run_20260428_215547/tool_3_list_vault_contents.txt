@@ -1,0 +1,5 @@
+Contents of vault/commodities:
+  📄 commodities.md (374 bytes)
+  📄 commodities_macro.md (3936 bytes)
+  📄 copper.md (483 bytes)
+  📁 gold

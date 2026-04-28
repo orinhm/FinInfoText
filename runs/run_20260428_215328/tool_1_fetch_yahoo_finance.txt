@@ -1,0 +1,60 @@
+# Apple Inc. (AAPL)
+**Sector**: Technology | **Industry**: Consumer Electronics
+
+Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home, and accessories comprising AirPods, Apple Vision Pro, Apple TV, Apple Watch, Beats products, and HomePod, as well as Apple branded and third-party accessories. It also provides AppleCare support and cloud services; and operates various platforms, including the App Store that allow customers to discover and download applications and digital content, such as books, music, video, games, and podcasts, as well as advertising services include third-party licensing arrangements and its own advertising platforms. In addition, the company offers various subscription-based services, such as Apple Arcade, a game subscription service; Apple Fitness+, a personalized fitness service; Apple Music, which offers users a curated listening experience with on-demand radio stations; Apple News+, a subscription news and magazine service; Apple TV, which offers exclusive original content and live sports; Apple Card, a co-branded credit card; and Apple Pay, a cashless payment service, as well as licenses its intellectual property. The company serves consumers, and small and mid-sized businesses; and the education, enterprise, and government markets. It distributes third-party applications for its products through the App Store. The company also sells its products through its retail and online stores, and direct sales force; and third-party cellular network carriers and resellers. The company was formerly known as Apple Computer, Inc. and changed its name to Apple Inc. in January 2007. Apple Inc. was founded in 1976 and is headquartered in Cupertino, California.
+
+## Price Summary (2026-02-27 → 2026-04-27)
+- Start: $264.18
+- End: $267.61
+- Change: +1.3%
+- High: $275.77
+- Low: $245.51
+- Avg Volume: 41,901,621
+
+## Key Financials
+- Pe Ratio: 34.24
+- Forward Pe: 28.85
+- Peg Ratio: 2.44
+- Price To Book: 45.04
+- Market Cap: 3966403870720
+- Enterprise Value: 3952421896192
+- Revenue: 435617005568
+- Gross Profit: 206157004800
+- Ebitda: 152901992448
+- Net Income: 117776998400
+- Profit Margin: 0.27
+- Operating Margin: 0.35
+- Roe: 1.52
+- Roa: 0.24
+- Debt To Equity: 102.63
+- Current Ratio: 0.97
+- Book Value: 6.00
+- Dividend Yield: 0.39
+- Beta: 1.11
+- 52W High: 288.62
+- 52W Low: 193.25
+- 50D Avg: 260.26
+- 200D Avg: 253.92
+- Short Ratio: 3.24
+- Shares Outstanding: 14681140000
+- Float Shares: 14656035251
+- Insider Pct: 0.02
+- Institution Pct: 0.65
+
+## Recent News (10 headlines)
+- [2026-04-27] Stock market today: Dow, S&P 500 and Nasdaq slip as OpenAI-linked stocks falter (Yahoo Finance)
+- [2026-04-28] Is Microsoft stock on the verge of big breakout? (Yahoo Finance)
+- [2026-04-27] US stocks: Will Mag 7 earnings be make-or-break for market rally? (Yahoo Finance Video)
+- [2026-04-28] Palmer Luckey Says Apple's New CEO John Ternus May Have Built Early VR Gear He Used As A Teen: 'His Only Non-Apple Job Was...' (Benzinga)
+- [2026-04-28] EU rules reining in Big Tech will now target cloud services and AI, regulators say (Reuters)
+- [2026-04-28] Apple's CEOs, Intel & AI, and Another SaaSpocalype (Motley Fool)
+- [2026-04-28] When April Delivers 5% Gains, the Rest of the Year Has Never Been Negative. Here’s What History Says About May (24/7 Wall St.)
+- [2026-04-28] Apple Stock Poised for 21% Surge (24/7 Wall St.)
+- [2026-04-28] Apple Likely to Post Slight Fiscal Q2 Upside, 'Solid' June Guidance, UBS Says (MT Newswires)
+- [2026-04-28] The Zacks Analyst Blog Highlights Alphabet, Microsoft, Amazon, Meta and Apple (Zacks)
+
+## Analyst Recommendations (4 periods)
+- [0m] Strong Buy: 7, Buy: 24, Hold: 14, Sell: 1, Strong Sell: 1 (Total: 47)
+- [-1m] Strong Buy: 6, Buy: 25, Hold: 15, Sell: 1, Strong Sell: 1 (Total: 48)
+- [-2m] Strong Buy: 5, Buy: 25, Hold: 16, Sell: 1, Strong Sell: 1 (Total: 48)
+- [-3m] Strong Buy: 6, Buy: 24, Hold: 15, Sell: 1, Strong Sell: 2 (Total: 48)

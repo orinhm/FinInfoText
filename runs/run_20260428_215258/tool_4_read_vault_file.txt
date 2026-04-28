@@ -1,0 +1,24 @@
+{
+    "vault_version": "1.0",
+    "created_at": "2026-04-24T15:58:00+03:00",
+    "sectors": {
+        "commodities": {
+            "macro_file": "commodities/commodities_macro.md",
+            "sub_sectors": {
+                "precious_metals/gold": {
+                    "sector_file": "commodities/precious_metals/gold/gold_sector.md",
+                    "assets": {
+                        "nfgc": {
+                            "file": "commodities/precious_metals/gold/assets/nfgc.md",
+                            "tickers": [
+                                "NFG",
+                                "NFGC.US"
+                            ],
+                            "name": "New Found Gold Corp."
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

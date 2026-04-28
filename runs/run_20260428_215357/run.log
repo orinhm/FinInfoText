@@ -1,0 +1,66 @@
+21:53:57 | Run directory: /home/ori/projects/FinInfoText/runs/run_20260428_215357
+21:53:57 | Log file: /home/ori/projects/FinInfoText/runs/run_20260428_215357/run.log
+21:53:58 | 
+21:53:58 | ╔════════════════════════════════════════════════════════════════════╗
+21:53:58 | ║  MarketSage (Tool Mode) — 2026-04-28 21:53:58                         ║
+21:53:58 | ╚════════════════════════════════════════════════════════════════════╝
+21:53:58 | 
+21:53:58 | USER REQUEST:
+21:53:58 | What's the retail sentiment on CEO.CA for NFG over the last 30 days?
+21:53:58 | 
+21:53:58 | CONFIGURATION:
+21:53:58 |   LLM provider:      gemini
+21:53:58 |   LLM model:         gemini-3.1-pro-preview
+21:53:58 |   Temperature:       1.0
+21:53:58 |   Max tokens:        8000
+21:53:58 |   Run directory:     /home/ori/projects/FinInfoText/runs/run_20260428_215357
+21:53:58 | 
+21:53:58 | System prompt: 5372 chars
+21:53:58 | 
+21:53:58 | ══════════════════════════════════════════════════════════════════════
+21:53:58 | ▸ Starting tool-based analysis...
+21:53:58 | ══════════════════════════════════════════════════════════════════════
+21:53:58 | 
+21:53:58 | ──────────────────────────────────────────────────────────────────────
+21:53:58 | [LLM #1] Iteration 1 — gemini / gemini-3.1-pro-preview
+21:53:58 | ──────────────────────────────────────────────────────────────────────
+21:53:58 | [LLM #1] SYSTEM PROMPT (5372 chars)
+21:53:58 | [LLM #1] USER MESSAGE (68 chars)
+21:54:02 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:54:02 | [LLM #1] API call completed in 3.9s (attempt 1)
+21:54:02 | [LLM #1] Model requested 1 tool call(s)
+21:54:02 | 
+21:54:02 |   ┌─ Tool Call #1: fetch_ceo_ca
+21:54:02 |   │  Args: {'channel': 'nfg', 'days_back': 30}
+21:54:02 |   🔧 Tool: fetch_ceo_ca(channel=nfg, days_back=30)
+21:54:02 |   fetch_source('ceo_ca', params={'channel': 'nfg', 'days_back': 30})
+21:54:02 |   🌐 Live scraping CEO.CA #nfg — back to 2026-03-29
+21:54:03 |   Batch 1: 50 spiels [2026-04-27 14:52 → 2026-04-28 18:02] total: 50
+21:54:04 |   Batch 2: 50 spiels [2026-04-20 20:28 → 2026-04-27 14:21] total: 100
+21:54:05 |   Batch 3: 50 spiels [2026-04-15 21:34 → 2026-04-20 19:49] total: 150
+21:54:06 |   Batch 4: 50 spiels [2026-04-10 16:02 → 2026-04-15 17:14] total: 200
+21:54:07 |   Batch 5: 50 spiels [2026-04-03 17:17 → 2026-04-09 21:33] total: 250
+21:54:08 |   Batch 6: 50 spiels [2026-03-31 19:52 → 2026-04-03 17:12] total: 300
+21:54:09 |   Batch 7: 50 spiels [2026-03-29 07:28 → 2026-03-31 18:57] total: 350
+21:54:09 |   Reached cutoff date — stopping.
+21:54:09 |   🌐 Fetched 341 spiels from #nfg
+21:54:09 |   ✓ 'ceo_ca' returned 341 records
+21:54:09 |   ✓ fetch_ceo_ca returned 341 records, 86247 chars
+21:54:09 |   │  Result: 86247 chars (7.3s)
+21:54:09 |   └─ Done: fetch_ceo_ca
+21:54:09 | 
+21:54:09 | ──────────────────────────────────────────────────────────────────────
+21:54:09 | [LLM #2] Iteration 2 — gemini / gemini-3.1-pro-preview
+21:54:09 | ──────────────────────────────────────────────────────────────────────
+21:54:38 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:54:38 | [LLM #2] API call completed in 28.5s (attempt 1)
+21:54:38 | 
+21:54:38 | [LLM #2] FINAL RESPONSE (5570 chars)
+21:54:38 | ──────────────────────────────────────────────────────────────────────
+21:54:38 |   💾 Tool log → tool_calls.json
+21:54:38 | 
+21:54:38 | ╔════════════════════════════════════════════════════════════════════╗
+21:54:38 | ║  Run complete — 39.7s, 2 LLM calls, 1 tool calls               ║
+21:54:38 | ╚════════════════════════════════════════════════════════════════════╝
+21:54:38 | 
+21:54:38 | Final analysis saved to: /home/ori/projects/FinInfoText/runs/run_20260428_215357/final_analysis.md

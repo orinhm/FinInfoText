@@ -1,0 +1,138 @@
+23:18:03 | Run directory: /home/ori/projects/FinInfoText/runs/run_20260428_231803
+23:18:03 | Log file: /home/ori/projects/FinInfoText/runs/run_20260428_231803/run.log
+23:18:03 | 
+23:18:03 | ╔════════════════════════════════════════════════════════════════════╗
+23:18:03 | ║  MarketSage (Tool Mode) — 2026-04-28 23:18:03                         ║
+23:18:03 | ╚════════════════════════════════════════════════════════════════════╝
+23:18:03 | 
+23:18:03 | USER REQUEST:
+23:18:03 | Summarize NFGC over the last 2 months
+23:18:03 | 
+23:18:03 | CONFIGURATION:
+23:18:03 |   LLM provider:      gemini
+23:18:03 |   LLM model:         gemini-3.1-pro-preview
+23:18:03 |   Temperature:       1.0
+23:18:03 |   Max tokens:        8000
+23:18:03 |   Run directory:     /home/ori/projects/FinInfoText/runs/run_20260428_231803
+23:18:03 | 
+23:18:03 | System prompt: 5372 chars
+23:18:03 | 
+23:18:03 | ══════════════════════════════════════════════════════════════════════
+23:18:03 | ▸ Starting tool-based analysis...
+23:18:03 | ══════════════════════════════════════════════════════════════════════
+23:18:03 | 
+23:18:03 | ──────────────────────────────────────────────────────────────────────
+23:18:03 | [LLM #1] Iteration 1 — gemini / gemini-3.1-pro-preview
+23:18:03 | ──────────────────────────────────────────────────────────────────────
+23:18:03 | [LLM #1] SYSTEM PROMPT (5372 chars)
+23:18:03 | [LLM #1] USER MESSAGE (37 chars)
+23:18:08 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+23:18:08 | [LLM #1] API call completed in 5.1s (attempt 1)
+23:18:08 | [LLM #1] Model requested 4 tool call(s)
+23:18:08 | 
+23:18:08 |   ┌─ Tool Call #1: fetch_yahoo_finance
+23:18:08 |   │  Args: {'ticker': 'NFGC', 'days_back': 60}
+23:18:08 |   🔧 Tool: fetch_yahoo_finance(ticker=NFGC, days_back=60)
+23:18:08 |   fetch_source('yahoo_finance', params={'ticker': 'NFGC', 'days_back': 60})
+23:18:08 |   🌐 Fetching Yahoo Finance data for NFGC (days_back=60)
+23:18:09 |   ✓ Company info: New Found Gold Corp. (Basic Materials)
+23:18:10 |   ✓ Price history: 41 days, 2.81 → 2.04 (-27.4%)
+23:18:10 |   ✓ Financials: 25 metrics
+23:18:10 |   ✓ News: 10 headlines
+23:18:10 |   ✓ Recommendations: 1 entries
+23:18:10 |   🌐 Yahoo Finance fetch complete for NFGC
+23:18:10 |   ✓ 'yahoo_finance' returned 1 records
+23:18:10 |   ✓ fetch_yahoo_finance returned 2764 chars
+23:18:10 |   │  Result: 2764 chars (2.1s)
+23:18:10 |   └─ Done: fetch_yahoo_finance
+23:18:10 | 
+23:18:10 |   ┌─ Tool Call #2: fetch_ceo_ca
+23:18:10 |   │  Args: {'days_back': 60, 'channel': 'nfg'}
+23:18:10 |   🔧 Tool: fetch_ceo_ca(channel=nfg, days_back=60)
+23:18:10 |   fetch_source('ceo_ca', params={'channel': 'nfg', 'days_back': 60})
+23:18:10 |   🌐 Live scraping CEO.CA #nfg — back to 2026-02-27
+23:18:11 |   Batch 1: 50 spiels [2026-04-27 14:52 → 2026-04-28 18:02] total: 50
+23:18:12 |   Batch 2: 50 spiels [2026-04-20 20:28 → 2026-04-27 14:21] total: 100
+23:18:13 |   Batch 3: 50 spiels [2026-04-15 21:34 → 2026-04-20 19:49] total: 150
+23:18:14 |   Batch 4: 50 spiels [2026-04-10 16:02 → 2026-04-15 17:14] total: 200
+23:18:15 |   Batch 5: 50 spiels [2026-04-03 17:17 → 2026-04-09 21:33] total: 250
+23:18:16 |   Batch 6: 50 spiels [2026-03-31 19:52 → 2026-04-03 17:12] total: 300
+23:18:17 |   Batch 7: 50 spiels [2026-03-29 07:28 → 2026-03-31 18:57] total: 350
+23:18:19 |   Batch 8: 50 spiels [2026-03-25 23:35 → 2026-03-29 05:57] total: 400
+23:18:20 |   Batch 9: 50 spiels [2026-03-24 13:06 → 2026-03-25 23:33] total: 450
+23:18:21 |   Batch 10: 50 spiels [2026-03-23 04:37 → 2026-03-24 13:06] total: 500
+23:18:22 |   Batch 11: 50 spiels [2026-03-20 11:32 → 2026-03-23 04:29] total: 550
+23:18:23 |   Batch 12: 50 spiels [2026-03-19 10:33 → 2026-03-20 11:27] total: 600
+23:18:24 |   Batch 13: 50 spiels [2026-03-17 23:07 → 2026-03-19 09:45] total: 650
+23:18:25 |   Batch 14: 50 spiels [2026-03-16 17:21 → 2026-03-17 23:04] total: 700
+23:18:26 |   Batch 15: 50 spiels [2026-03-12 18:42 → 2026-03-16 17:21] total: 750
+23:18:27 |   Batch 16: 50 spiels [2026-03-10 00:34 → 2026-03-12 18:34] total: 800
+23:18:28 |   Batch 17: 50 spiels [2026-03-06 17:13 → 2026-03-10 00:33] total: 850
+23:18:29 |   Batch 18: 50 spiels [2026-03-05 14:57 → 2026-03-06 17:10] total: 900
+23:18:30 |   Batch 19: 50 spiels [2026-03-03 21:05 → 2026-03-05 14:52] total: 950
+23:18:31 |   Batch 20: 50 spiels [2026-03-02 20:11 → 2026-03-03 20:58] total: 1000
+23:18:32 |   Batch 21: 50 spiels [2026-03-02 03:40 → 2026-03-02 19:51] total: 1050
+23:18:34 |   Batch 22: 50 spiels [2026-03-01 16:05 → 2026-03-02 03:38] total: 1100
+23:18:35 |   Batch 23: 50 spiels [2026-02-27 22:20 → 2026-03-01 16:03] total: 1150
+23:18:35 |   Reached cutoff date — stopping.
+23:18:35 |   🌐 Fetched 1143 spiels from #nfg
+23:18:35 |   ✓ 'ceo_ca' returned 1143 records
+23:18:35 |   ✓ fetch_ceo_ca returned 1143 records, 254281 chars
+23:18:35 |   │  Result: 254281 chars (24.3s)
+23:18:35 |   └─ Done: fetch_ceo_ca
+23:18:35 | 
+23:18:35 |   ┌─ Tool Call #3: fetch_nfg_news
+23:18:35 |   │  Args: {'days_back': 60}
+23:18:35 |   🔧 Tool: fetch_nfg_news(days_back=60)
+23:18:35 |   fetch_source('nfg_news', params={'days_back': 60})
+23:18:35 |   🌐 Live scraping newfoundgold.ca news — back to 2026-02-27
+23:18:36 |   Page 1: 16 articles
+23:18:36 |   Found 7 articles in window, fetching content...
+23:18:36 |     [1/7] New Found Gold Closes Bought Deal Financing Including Full Exercise of Underwrit
+23:18:37 |     [2/7] New Found Gold Continues to Expand Dropkick Zone, Queensway Gold Project
+23:18:38 |     [3/7] New Found Gold Announces $205M Finance Package
+23:18:39 |     [4/7] New Found Gold Files 2025 Year End Disclosure Documents
+23:18:39 |     [5/7] New Found Gold Files Hammerdown Gold Project NI 43-101 Technical Report
+23:18:40 |     [6/7] New Found Gold Announces US$75 Million Term Sheet to Advance Queensway Developme
+23:18:41 |     [7/7] New Found Gold Grade Control Drilling Continues to Deliver At-Surface High Grade
+23:18:41 |   🌐 Fetched 7 articles
+23:18:41 |   ✓ 'nfg_news' returned 7 records
+23:18:41 |   ✓ fetch_nfg_news returned 7 articles, 117099 chars
+23:18:41 |   │  Result: 117099 chars (6.7s)
+23:18:41 |   └─ Done: fetch_nfg_news
+23:18:41 | 
+23:18:41 |   ┌─ Tool Call #4: read_vault_file
+23:18:41 |   │  Args: {'path': 'commodities/precious_metals/gold/assets/nfgc.md'}
+23:18:41 |   🔧 Tool: read_vault_file(/home/ori/projects/FinInfoText/vault/commodities/precious_metals/gold/assets/nfgc.md)
+23:18:41 |   │  Result: 71 chars (0.0s)
+23:18:41 |   └─ Done: read_vault_file
+23:18:41 | 
+23:18:41 | ──────────────────────────────────────────────────────────────────────
+23:18:41 | [LLM #2] Iteration 2 — gemini / gemini-3.1-pro-preview
+23:18:41 | ──────────────────────────────────────────────────────────────────────
+23:19:04 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+23:19:04 | [LLM #2] API call completed in 22.3s (attempt 1)
+23:19:04 | [LLM #2] Model requested 1 tool call(s)
+23:19:04 | 
+23:19:04 |   ┌─ Tool Call #5: persist_learning
+23:19:04 |   │  Args: {'vault_path': 'commodities/precious_metals/gold/assets/nfgc.md', 'level': 'asset', 'text': 'New Found Gold (NFGC / NFG.V) transitioned from pure explorer to producer in Q4 2025, recording its first revenue of $5.8M from the Hammerdown Mine and Pine Cove Mill. In April 2026, the company fully de-risked its Queensway Phase 1 path to production (targeted late 2027) by securing a $205M CAD finance package ($115M equity bought deal at $2.96 CAD and a $105M senior secured credit facility at 8.75%) backed by EdgePoint Investment Group and Eric Sprott, replacing a previously announced US$75M Nebari credit term sheet. Exploration continues to yield bonanza grades, including 71.8 g/t Au over 31.95m at Iceberg and extending the Dropkick Zone 11km north of the AFZ Core.'}
+23:19:04 |   🔧 Tool: persist_learning(level=asset, text=New Found Gold (NFGC / NFG.V) transitioned from pure explore...)
+23:19:04 |   ✓ persist_learning → /home/ori/projects/FinInfoText/vault/commodities/precious_metals/gold/assets/nfgc.md
+23:19:04 |   │  Result: 77 chars (0.0s)
+23:19:04 |   └─ Done: persist_learning
+23:19:04 | 
+23:19:04 | ──────────────────────────────────────────────────────────────────────
+23:19:04 | [LLM #3] Iteration 3 — gemini / gemini-3.1-pro-preview
+23:19:04 | ──────────────────────────────────────────────────────────────────────
+23:19:25 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+23:19:25 | [LLM #3] API call completed in 21.4s (attempt 1)
+23:19:25 | 
+23:19:25 | [LLM #3] FINAL RESPONSE (6394 chars)
+23:19:25 | ──────────────────────────────────────────────────────────────────────
+23:19:25 |   💾 Tool log → tool_calls.json
+23:19:25 | 
+23:19:25 | ╔════════════════════════════════════════════════════════════════════╗
+23:19:25 | ║  Run complete — 81.9s, 3 LLM calls, 5 tool calls               ║
+23:19:25 | ╚════════════════════════════════════════════════════════════════════╝
+23:19:25 | 
+23:19:25 | Final analysis saved to: /home/ori/projects/FinInfoText/runs/run_20260428_231803/final_analysis.md

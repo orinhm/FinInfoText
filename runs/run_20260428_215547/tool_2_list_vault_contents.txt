@@ -1,0 +1,6 @@
+Contents of vault/:
+  📄 _index.json (800 bytes)
+  📁 _reports
+  📁 commodities
+  📁 equities
+  📁 mining

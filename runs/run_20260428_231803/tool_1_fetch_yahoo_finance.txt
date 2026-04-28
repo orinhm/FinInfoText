@@ -1,0 +1,54 @@
+# New Found Gold Corp. (NFGC)
+**Sector**: Basic Materials | **Industry**: Gold
+
+New Found Gold Corp., a mineral exploration company, engages in the identification, evaluation, acquisition, and exploration of mineral properties in the Provinces of Newfoundland and Labrador, Canada. The company primarily explores for gold deposit. It holds 100% interests in the Queensway project that includes 103 mineral licenses and 7,018 claims covering an area of 175,600 hectares located near Gander, Newfoundland; and the Kingsway project located in Gander, Newfoundland. The company was formerly known as Palisade Resources Corp. and changed its name to New Found Gold Corp. in June 2017. New Found Gold Corp. was incorporated in 2016 and is headquartered in Vancouver, Canada.
+
+## Price Summary (2026-02-27 → 2026-04-27)
+- Start: $2.81
+- End: $2.04
+- Change: -27.4%
+- High: $3.03
+- Low: $1.67
+- Avg Volume: 2,062,519
+
+## Key Financials
+- Forward Pe: -8.17
+- Price To Book: 2.21
+- Market Cap: 686316480
+- Enterprise Value: 637640704
+- Revenue: 5806973
+- Gross Profit: 118255
+- Ebitda: -58375828
+- Net Income: -47572620
+- Profit Margin: 0.00
+- Operating Margin: -3.62
+- Roe: -0.20
+- Roa: -0.12
+- Debt To Equity: 0.27
+- Current Ratio: 3.89
+- Book Value: 0.89
+- Beta: 1.94
+- 52W High: 3.59
+- 52W Low: 1.07
+- 50D Avg: 2.26
+- 200D Avg: 2.30
+- Short Ratio: 2.71
+- Shares Outstanding: 345212549
+- Float Shares: 243530193
+- Insider Pct: 0.32
+- Institution Pct: 0.14
+
+## Recent News (10 headlines)
+- [2026-04-28] A Look At New Found Gold (TSXV:NFG) Valuation As Shares Trade At A Discounted 2.5x P/B (Simply Wall St.)
+- [2026-04-20] New Found Gold Up In US Premarket As Announces $205M Funding Package to Advance Queensway Project (MT Newswires)
+- [2026-04-07] Independent Director of New Found Gold Picks Up 33% More Stock (Simply Wall St.)
+- [2026-03-31] Why New Found Gold (NFGC) Still Has Bullish Backing Despite a Lower Roth MKM Target (Insider Monkey)
+- [2026-03-31] Analysts See Over 100% Upside for New Found (NFGC) Amid Accelerated Progress At Queensway Gold Project (Insider Monkey)
+- [2026-03-30] TSX Growth Companies With High Insider Ownership Expecting 78 Percent Earnings Growth (Simply Wall St.)
+- [2026-03-27] 3 TSX Stocks Estimated To Be 13.8% To 23.3% Below Intrinsic Value (Simply Wall St.)
+- [2026-03-26] 3 TSX Stocks That Could Be Trading At Up To 49.8% Below Intrinsic Value (Simply Wall St.)
+- [2026-03-05] A Look At New Found Gold (TSXV:NFG) Valuation After Queensway And Hammerdown Progress Updates (Simply Wall St.)
+- [2026-03-05] New Found Gold (TSXV:NFG) Is Down 10.2% After Securing US$75M Loan For Queensway Development (Simply Wall St.)
+
+## Analyst Recommendations (1 periods)
+- [0m] Strong Buy: 0, Buy: 1, Hold: 0, Sell: 0, Strong Sell: 0 (Total: 1)

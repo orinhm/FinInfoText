@@ -1,0 +1,11 @@
+[
+  {
+    "iteration": 1,
+    "tool": "fetch_yahoo_finance",
+    "args": {
+      "ticker": "AAPL"
+    },
+    "result_length": 4131,
+    "elapsed_seconds": 2.38
+  }
+]

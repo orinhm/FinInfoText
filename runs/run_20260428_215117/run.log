@@ -1,0 +1,37 @@
+21:51:17 | Run directory: /home/ori/projects/FinInfoText/runs/run_20260428_215117
+21:51:17 | Log file: /home/ori/projects/FinInfoText/runs/run_20260428_215117/run.log
+21:51:17 | 
+21:51:17 | ╔════════════════════════════════════════════════════════════════════╗
+21:51:17 | ║  MarketSage (Tool Mode) — 2026-04-28 21:51:17                         ║
+21:51:17 | ╚════════════════════════════════════════════════════════════════════╝
+21:51:17 | 
+21:51:17 | USER REQUEST:
+21:51:17 | Summarize NFGC over the last 2 months
+21:51:17 | 
+21:51:17 | CONFIGURATION:
+21:51:17 |   LLM provider:      gemini
+21:51:17 |   LLM model:         gemini-3.1-pro-preview
+21:51:17 |   Temperature:       1.0
+21:51:17 |   Max tokens:        8000
+21:51:17 |   Run directory:     /home/ori/projects/FinInfoText/runs/run_20260428_215117
+21:51:17 | 
+21:51:17 | System prompt: 5372 chars
+21:51:17 | 
+21:51:17 | ══════════════════════════════════════════════════════════════════════
+21:51:17 | ▸ Starting tool-based analysis...
+21:51:17 | ══════════════════════════════════════════════════════════════════════
+21:51:17 | 
+21:51:17 | ──────────────────────────────────────────────────────────────────────
+21:51:17 | [LLM #1] Iteration 1 — gemini / gemini-3.1-pro-preview
+21:51:17 | ──────────────────────────────────────────────────────────────────────
+21:51:17 | [LLM #1] SYSTEM PROMPT (5372 chars)
+21:51:17 | [LLM #1] USER MESSAGE (37 chars)
+21:51:25 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:51:25 | [LLM #1] API call completed in 7.4s (attempt 1)
+21:51:25 | [LLM #1] Model requested 7 tool call(s)
+21:51:25 | 
+21:51:25 |   ┌─ Tool Call #1: read_vault_file
+21:51:25 |   │  Args: {'path': 'commodities/precious_metals/gold/assets/nfgc.md'}
+21:51:25 |   🔧 Tool: read_vault_file(/home/ori/projects/FinInfoText/vault/commodities/precious_metals/gold/assets/nfgc.md)
+21:51:25 |   │  Result: 71 chars (0.0s)
+21:51:25 |   └─ Done: read_vault_file

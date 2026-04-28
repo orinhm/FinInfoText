@@ -1,0 +1,9 @@
+Available data scrapers:
+
+- **ceo_ca**: CEO.CA forum discussions (spiels) — retail sentiment, message boards
+- **yahoo_finance**: Stock data, financials, news, analyst recommendations
+- **fred**: Federal Reserve Economic Data — macroeconomic indicators (800K+ series)
+- **nfg_news**: NewFoundGold Corp official press releases
+- **web_news**: Generic web/news article scraper (mining.com, kitco, etc.)
+
+Registry contains: ['ceo_ca', 'fred', 'nfg_news', 'web_news', 'yahoo_finance']

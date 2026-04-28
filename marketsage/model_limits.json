@@ -1,0 +1,26 @@
+{
+  "openai/mock": {
+    "input": 32000,
+    "output": 4096
+  },
+  "gemini/gemini-flash-latest": {
+    "input": 1048576,
+    "output": 65536
+  },
+  "gemini/gemini-3.1-pro-latest": {
+    "input": 32000,
+    "output": 4096
+  },
+  "gemini/gemini-3.1-pro": {
+    "input": 32000,
+    "output": 4096
+  },
+  "gemini/gemini-1.5-pro": {
+    "input": 2097152,
+    "output": 8192
+  },
+  "gemini/gemini-3.1-pro-preview": {
+    "input": 1048576,
+    "output": 65536
+  }
+}

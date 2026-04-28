@@ -1,0 +1,51 @@
+[
+  {
+    "iteration": 1,
+    "tool": "fetch_yahoo_finance",
+    "args": {
+      "ticker": "NFGC",
+      "days_back": 60
+    },
+    "result_length": 2764,
+    "elapsed_seconds": 2.13
+  },
+  {
+    "iteration": 1,
+    "tool": "fetch_ceo_ca",
+    "args": {
+      "days_back": 60,
+      "channel": "nfg"
+    },
+    "result_length": 254281,
+    "elapsed_seconds": 24.33
+  },
+  {
+    "iteration": 1,
+    "tool": "fetch_nfg_news",
+    "args": {
+      "days_back": 60
+    },
+    "result_length": 117099,
+    "elapsed_seconds": 6.65
+  },
+  {
+    "iteration": 1,
+    "tool": "read_vault_file",
+    "args": {
+      "path": "commodities/precious_metals/gold/assets/nfgc.md"
+    },
+    "result_length": 71,
+    "elapsed_seconds": 0.0
+  },
+  {
+    "iteration": 2,
+    "tool": "persist_learning",
+    "args": {
+      "vault_path": "commodities/precious_metals/gold/assets/nfgc.md",
+      "level": "asset",
+      "text": "New Found Gold (NFGC / NFG.V) transitioned from pure explorer to producer in Q4 2025, recording its first revenue of $5.8M from the Hammerdown Mine and Pine Cove Mill. In April 2026, the company fully de-risked its Queensway Phase 1 path to production (targeted late 2027) by securing a $205M CAD finance package ($115M equity bought deal at $2.96 CAD and a $105M senior secured credit facility at 8.75%) backed by EdgePoint Investment Group and Eric Sprott, replacing a previously announced US$75M Nebari credit term sheet. Exploration continues to yield bonanza grades, including 71.8 g/t Au over 31.95m at Iceberg and extending the Dropkick Zone 11km north of the AFZ Core."
+    },
+    "result_length": 77,
+    "elapsed_seconds": 0.0
+  }
+]

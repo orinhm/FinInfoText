@@ -1,0 +1,37 @@
+21:52:16 | Run directory: /home/ori/projects/FinInfoText/runs/run_20260428_215216
+21:52:16 | Log file: /home/ori/projects/FinInfoText/runs/run_20260428_215216/run.log
+21:52:16 | 
+21:52:16 | ╔════════════════════════════════════════════════════════════════════╗
+21:52:16 | ║  MarketSage (Tool Mode) — 2026-04-28 21:52:16                         ║
+21:52:16 | ╚════════════════════════════════════════════════════════════════════╝
+21:52:16 | 
+21:52:16 | USER REQUEST:
+21:52:16 | What do we know about NFGC from the vault? Just check existing knowledge.
+21:52:16 | 
+21:52:16 | CONFIGURATION:
+21:52:16 |   LLM provider:      gemini
+21:52:16 |   LLM model:         gemini-3.1-pro-preview
+21:52:16 |   Temperature:       1.0
+21:52:16 |   Max tokens:        8000
+21:52:16 |   Run directory:     /home/ori/projects/FinInfoText/runs/run_20260428_215216
+21:52:16 | 
+21:52:16 | System prompt: 5372 chars
+21:52:16 | 
+21:52:16 | ══════════════════════════════════════════════════════════════════════
+21:52:16 | ▸ Starting tool-based analysis...
+21:52:16 | ══════════════════════════════════════════════════════════════════════
+21:52:16 | 
+21:52:16 | ──────────────────────────────────────────────────────────────────────
+21:52:16 | [LLM #1] Iteration 1 — gemini / gemini-3.1-pro-preview
+21:52:16 | ──────────────────────────────────────────────────────────────────────
+21:52:16 | [LLM #1] SYSTEM PROMPT (5372 chars)
+21:52:16 | [LLM #1] USER MESSAGE (73 chars)
+21:52:21 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:52:21 | [LLM #1] API call completed in 4.6s (attempt 1)
+21:52:21 | [LLM #1] Model requested 1 tool call(s)
+21:52:21 | 
+21:52:21 |   ┌─ Tool Call #1: read_vault_file
+21:52:21 |   │  Args: {'path': 'commodities/precious_metals/gold/assets/nfgc.md'}
+21:52:21 |   🔧 Tool: read_vault_file(/home/ori/projects/FinInfoText/vault/commodities/precious_metals/gold/assets/nfgc.md)
+21:52:21 |   │  Result: 71 chars (0.0s)
+21:52:21 |   └─ Done: read_vault_file

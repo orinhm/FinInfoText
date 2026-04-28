@@ -1,0 +1,63 @@
+21:53:28 | Run directory: /home/ori/projects/FinInfoText/runs/run_20260428_215328
+21:53:28 | Log file: /home/ori/projects/FinInfoText/runs/run_20260428_215328/run.log
+21:53:29 | 
+21:53:29 | ╔════════════════════════════════════════════════════════════════════╗
+21:53:29 | ║  MarketSage (Tool Mode) — 2026-04-28 21:53:29                         ║
+21:53:29 | ╚════════════════════════════════════════════════════════════════════╝
+21:53:29 | 
+21:53:29 | USER REQUEST:
+21:53:29 | Get me a quick summary of AAPL stock from Yahoo Finance - current price, recent trend, and key metrics
+21:53:29 | 
+21:53:29 | CONFIGURATION:
+21:53:29 |   LLM provider:      gemini
+21:53:29 |   LLM model:         gemini-3.1-pro-preview
+21:53:29 |   Temperature:       1.0
+21:53:29 |   Max tokens:        8000
+21:53:29 |   Run directory:     /home/ori/projects/FinInfoText/runs/run_20260428_215328
+21:53:29 | 
+21:53:29 | System prompt: 5372 chars
+21:53:29 | 
+21:53:29 | ══════════════════════════════════════════════════════════════════════
+21:53:29 | ▸ Starting tool-based analysis...
+21:53:29 | ══════════════════════════════════════════════════════════════════════
+21:53:29 | 
+21:53:29 | ──────────────────────────────────────────────────────────────────────
+21:53:29 | [LLM #1] Iteration 1 — gemini / gemini-3.1-pro-preview
+21:53:29 | ──────────────────────────────────────────────────────────────────────
+21:53:29 | [LLM #1] SYSTEM PROMPT (5372 chars)
+21:53:29 | [LLM #1] USER MESSAGE (102 chars)
+21:53:33 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:53:33 | [LLM #1] API call completed in 4.1s (attempt 1)
+21:53:33 | [LLM #1] Model requested 1 tool call(s)
+21:53:33 | 
+21:53:33 |   ┌─ Tool Call #1: fetch_yahoo_finance
+21:53:33 |   │  Args: {'ticker': 'AAPL'}
+21:53:33 |   🔧 Tool: fetch_yahoo_finance(ticker=AAPL, days_back=60)
+21:53:33 |   fetch_source('yahoo_finance', params={'ticker': 'AAPL', 'days_back': 60})
+21:53:33 |   🌐 Fetching Yahoo Finance data for AAPL (days_back=60)
+21:53:34 |   ✓ Company info: Apple Inc. (Technology)
+21:53:34 |   ✓ Price history: 41 days, 264.18 → 267.61 (+1.3%)
+21:53:34 |   ✓ Financials: 28 metrics
+21:53:35 |   ✓ News: 10 headlines
+21:53:35 |   ✓ Recommendations: 4 entries
+21:53:35 |   🌐 Yahoo Finance fetch complete for AAPL
+21:53:35 |   ✓ 'yahoo_finance' returned 1 records
+21:53:35 |   ✓ fetch_yahoo_finance returned 4131 chars
+21:53:35 |   │  Result: 4131 chars (2.4s)
+21:53:35 |   └─ Done: fetch_yahoo_finance
+21:53:35 | 
+21:53:35 | ──────────────────────────────────────────────────────────────────────
+21:53:35 | [LLM #2] Iteration 2 — gemini / gemini-3.1-pro-preview
+21:53:35 | ──────────────────────────────────────────────────────────────────────
+21:53:47 | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent "HTTP/1.1 200 OK"
+21:53:47 | [LLM #2] API call completed in 11.8s (attempt 1)
+21:53:47 | 
+21:53:47 | [LLM #2] FINAL RESPONSE (3289 chars)
+21:53:47 | ──────────────────────────────────────────────────────────────────────
+21:53:47 |   💾 Tool log → tool_calls.json
+21:53:47 | 
+21:53:47 | ╔════════════════════════════════════════════════════════════════════╗
+21:53:47 | ║  Run complete — 18.3s, 2 LLM calls, 1 tool calls               ║
+21:53:47 | ╚════════════════════════════════════════════════════════════════════╝
+21:53:47 | 
+21:53:47 | Final analysis saved to: /home/ori/projects/FinInfoText/runs/run_20260428_215328/final_analysis.md
