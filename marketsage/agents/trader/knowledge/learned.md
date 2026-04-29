@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-04-29T04:03:47.757071+00:00'
-revision: 28
-summary: 'Learning: Mega-cap copper producers can temporarily decouple from reco'
+last_modified: '2026-04-29T04:05:54.763570+00:00'
+revision: 29
+summary: 'Learning: [2026-04-28] During periods of heightened Middle Eastern geo'
 type: knowledge
 ---
 # Learnings
@@ -62,3 +62,5 @@ type: knowledge
 - [2026-04-28] Gold prices easing concurrently with a falling U.S. dollar is a notable divergence that is typically driven by algorithm-heavy positioning and liquidity adjustments ahead of major Federal Reserve interest rate decisions.
 
 - [2026-04-29] Mega-cap copper producers can temporarily decouple from record-high commodity spot prices ($12,500+/MT) due to severe idiosyncratic operational risks (e.g., major mine output cuts or restarts like FCX's Grasberg) or sudden leadership vacuums (e.g., unexpected CEO death at SCCO), leading to 15-20% multiple contractions despite high underlying free cash flow potential.
+
+- [2026-04-29] [2026-04-28] During periods of heightened Middle Eastern geopolitical conflict, integrated supermajors can generate 'exceptional oil trading' outsized profits that buffer standard upstream/downstream operational margin compression.
