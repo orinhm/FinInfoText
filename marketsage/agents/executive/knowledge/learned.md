@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-04-29T04:01:24.914359+00:00'
-revision: 24
-summary: 'Learning: [2026-04-29] The achievement of a $5 Trillion+ market cap by'
+last_modified: '2026-04-29T04:44:36.354727+00:00'
+revision: 26
+summary: 'Learning: [2026-04-29] The ''Geopolitical Margin Squeeze'' in ocean frei'
 type: knowledge
 ---
 # Learnings
@@ -54,3 +54,7 @@ type: knowledge
 - [2026-04-28] Due to terrestrial permitting constraints and a structural supply deficit, speculative capital in the copper industry is increasingly funding frontier technologies, such as deep-sea polymetallic nodule extraction.
 
 - [2026-04-29] [2026-04-29] The achievement of a $5 Trillion+ market cap by AI infrastructure leaders (e.g., NVIDIA) definitively marks the transition of the AI sector from 'speculative hype' into a 'revenue realization' and monopoly-margin phase (e.g., 56% net profit margins on hardware/software ecosystems).
+
+- [2026-04-29] 'Cluster insider buying' (simultaneous open-market purchases by the CEO, Chairman, and Directors) occurring in a tight window immediately prior to an Environmental Impact Statement (EIS) submission is a massive technical confidence indicator for development-stage miners.
+
+- [2026-04-29] [2026-04-29] The 'Geopolitical Margin Squeeze' in ocean freight: Geopolitical chokepoint disruptions (e.g., Red Sea, Strait of Hormuz) cause temporary spikes in deep-sea freight rates but simultaneously drive up bunker fuel costs and transit times, often resulting in net-negative operating margins for carriers despite top-line revenue bumps.
