@@ -1,8 +1,7 @@
 ---
-last_modified: '2026-04-28T04:15:32.370070+00:00'
-revision: 27
-summary: 'Learning from trader/gold_trader: Gold prices easing concurrently with a
-  falling U.S. dollar i'
+last_modified: '2026-04-29T04:03:47.757071+00:00'
+revision: 28
+summary: 'Learning: Mega-cap copper producers can temporarily decouple from reco'
 type: knowledge
 ---
 # Learnings
@@ -61,3 +60,5 @@ type: knowledge
 - [2026-04-28] Major mining M&A is expected to heavily favor acquiring existing, safe-jurisdiction production rather than risking the 10-year 'Lassonde Curve' development cycle in hostile regulatory environments.
 
 - [2026-04-28] Gold prices easing concurrently with a falling U.S. dollar is a notable divergence that is typically driven by algorithm-heavy positioning and liquidity adjustments ahead of major Federal Reserve interest rate decisions.
+
+- [2026-04-29] Mega-cap copper producers can temporarily decouple from record-high commodity spot prices ($12,500+/MT) due to severe idiosyncratic operational risks (e.g., major mine output cuts or restarts like FCX's Grasberg) or sudden leadership vacuums (e.g., unexpected CEO death at SCCO), leading to 15-20% multiple contractions despite high underlying free cash flow potential.
