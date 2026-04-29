@@ -1,8 +1,7 @@
 ---
-last_modified: '2026-04-28T04:07:51.074292+00:00'
-revision: 23
-summary: 'Learning from executive: Due to terrestrial permitting constraints and a
-  structural s'
+last_modified: '2026-04-29T04:01:24.914359+00:00'
+revision: 24
+summary: 'Learning: [2026-04-29] The achievement of a $5 Trillion+ market cap by'
 type: knowledge
 ---
 # Learnings
@@ -53,3 +52,5 @@ type: knowledge
 - [2026-04-28] Extreme copper supply constraints, driven by sovereign interventions and aging mine profiles, are placing a 'scarcity premium' on de-risked, near-production assets in stable tier-one jurisdictions (e.g., North America, Australia).
 
 - [2026-04-28] Due to terrestrial permitting constraints and a structural supply deficit, speculative capital in the copper industry is increasingly funding frontier technologies, such as deep-sea polymetallic nodule extraction.
+
+- [2026-04-29] [2026-04-29] The achievement of a $5 Trillion+ market cap by AI infrastructure leaders (e.g., NVIDIA) definitively marks the transition of the AI sector from 'speculative hype' into a 'revenue realization' and monopoly-margin phase (e.g., 56% net profit margins on hardware/software ecosystems).
