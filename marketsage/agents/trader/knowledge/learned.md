@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-04-29T04:07:11.049680+00:00'
-revision: 30
-summary: 'Learning: A significant market divergence occurs when institutional ET'
+last_modified: '2026-04-29T04:31:02.788287+00:00'
+revision: 32
+summary: 'Learning: [2026-04-29] Geopolitical conflict (e.g., Iran War in early '
 type: knowledge
 ---
 # Learnings
@@ -66,3 +66,7 @@ type: knowledge
 - [2026-04-29] [2026-04-28] During periods of heightened Middle Eastern geopolitical conflict, integrated supermajors can generate 'exceptional oil trading' outsized profits that buffer standard upstream/downstream operational margin compression.
 
 - [2026-04-29] A significant market divergence occurs when institutional ETF inflows (e.g., IBIT) drive Bitcoin prices to near all-time highs, while retail trading velocity simultaneously collapses, leading to massive earnings misses for consumer crypto brokerages like Robinhood. This suggests a transition from a retail-driven asset class to an institutionally dominated store of value.
+
+- [2026-04-29] Retail investors frequently misinterpret the presence of institutional market makers (e.g., Jane Street) in junior miner shareholder registries as coordinated short-selling campaigns, when they are typically acting as high-frequency liquidity providers or hedging ETF positions.
+
+- [2026-04-29] [2026-04-29] Geopolitical conflict (e.g., Iran War in early 2026) acts as a primary catalyst for agricultural commodity ETF rallies (like WEAT and CORN) as capital rotates out of retreating equities and into hard asset inflation/supply-shock hedges.
