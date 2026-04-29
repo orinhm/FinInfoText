@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-04-29T04:05:54.763570+00:00'
-revision: 29
-summary: 'Learning: [2026-04-28] During periods of heightened Middle Eastern geo'
+last_modified: '2026-04-29T04:07:11.049680+00:00'
+revision: 30
+summary: 'Learning: A significant market divergence occurs when institutional ET'
 type: knowledge
 ---
 # Learnings
@@ -64,3 +64,5 @@ type: knowledge
 - [2026-04-29] Mega-cap copper producers can temporarily decouple from record-high commodity spot prices ($12,500+/MT) due to severe idiosyncratic operational risks (e.g., major mine output cuts or restarts like FCX's Grasberg) or sudden leadership vacuums (e.g., unexpected CEO death at SCCO), leading to 15-20% multiple contractions despite high underlying free cash flow potential.
 
 - [2026-04-29] [2026-04-28] During periods of heightened Middle Eastern geopolitical conflict, integrated supermajors can generate 'exceptional oil trading' outsized profits that buffer standard upstream/downstream operational margin compression.
+
+- [2026-04-29] A significant market divergence occurs when institutional ETF inflows (e.g., IBIT) drive Bitcoin prices to near all-time highs, while retail trading velocity simultaneously collapses, leading to massive earnings misses for consumer crypto brokerages like Robinhood. This suggests a transition from a retail-driven asset class to an institutionally dominated store of value.
