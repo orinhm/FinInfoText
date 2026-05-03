@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-04-29T05:12:35.517250+00:00'
-revision: 2
-summary: 'Learning: Geopolitical Risk Premium in advanced semiconductors (TSMC, '
+last_modified: '2026-05-03T14:34:57.478702+00:00'
+revision: 3
+summary: 'Learning: [2026-05-03] BRICS De-Dollarization Dynamics: The decoupling'
 type: knowledge
 ---
 # Geopolitical Learnings
@@ -17,3 +17,5 @@ type: knowledge
 - [2026-04-29] Jurisdictional risk hierarchy for mining investment: Tier-1 (Canada, Australia, US, Scandinavia) commands a 30-50% premium on identical ore bodies vs. Tier-2/3 jurisdictions. This premium widened during 2025-2026 as resource nationalism events increased in Panama, Chile, and DRC.
 
 - [2026-04-29] Geopolitical Risk Premium in advanced semiconductors (TSMC, ASML) is currently being eclipsed by AI infrastructure super-cycle momentum. Markets are structurally underpricing the supply chain and geopolitical tail risks associated with Taiwan and US-China export controls due to overwhelming near-term earnings growth from AI demand.
+
+- [2026-05-03] [2026-05-03] BRICS De-Dollarization Dynamics: The decoupling of DXY (stable at ~98.2) from Gold (surging to ~$4,644/oz) indicates that global de-dollarization is not primarily a shift from USD to other fiat currencies (like EUR or JPY). Instead, it is a structural flight by BRICS and non-aligned central banks into hard assets. The sustained 10-year Treasury yields around 4.40% confirm reduced foreign sovereign bidding for US debt, creating a permanent geopolitical risk premium in both gold and US borrowing costs.
