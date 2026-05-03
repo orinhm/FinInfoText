@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-04-29T04:44:36.354727+00:00'
-revision: 26
-summary: 'Learning: [2026-04-29] The ''Geopolitical Margin Squeeze'' in ocean frei'
+last_modified: '2026-05-03T14:36:19.778124+00:00'
+revision: 27
+summary: 'Learning: The "Geopolitical Margin Squeeze" heuristic is mathematicall'
 type: knowledge
 ---
 # Learnings
@@ -58,3 +58,5 @@ type: knowledge
 - [2026-04-29] 'Cluster insider buying' (simultaneous open-market purchases by the CEO, Chairman, and Directors) occurring in a tight window immediately prior to an Environmental Impact Statement (EIS) submission is a massive technical confidence indicator for development-stage miners.
 
 - [2026-04-29] [2026-04-29] The 'Geopolitical Margin Squeeze' in ocean freight: Geopolitical chokepoint disruptions (e.g., Red Sea, Strait of Hormuz) cause temporary spikes in deep-sea freight rates but simultaneously drive up bunker fuel costs and transit times, often resulting in net-negative operating margins for carriers despite top-line revenue bumps.
+
+- [2026-05-03] The "Geopolitical Margin Squeeze" heuristic is mathematically confirmed during the Spring 2026 Red Sea/Middle East crisis: Top-line revenue bumps from higher spot freight rates are entirely consumed by surging bunker fuel costs (FRED Energy Index +52% in March 2026 alone) and elongated rerouting transit times. This results in negative or flat operating margins for major ocean carriers like ZIM (-2%) and Maersk (0%), even while producing positive net income from non-operating gains. Cargo rerouting is structurally acting as a tax on global trade rather than a pure windfall for carriers.
