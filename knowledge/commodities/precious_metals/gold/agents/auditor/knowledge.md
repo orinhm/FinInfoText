@@ -23,3 +23,5 @@ type: knowledge
 - [2026-04-27] Junior developers trading at a high Price to Book (P/B) ratio (e.g., >2.0) compared to peer averages (0.5x–1.2x P/NAV) are highly sensitive to 'Integrity Gates' such as AISC projections; exceeding $1,800/oz can trigger a re-rating toward book value.
 
 - [2026-04-27] A high Current Ratio (e.g., >3.5) in exploration-stage miners provides a technical 'solvency floor' but does not necessarily protect the share price from sector-wide volatility or a high Beta (e.g., >1.90).
+
+- [2026-04-28] For high-grade, nuggety orogenic gold deposits, shifting to high-density 5x5m grade control drilling is a critical technical step to prove continuity and de-risk open-pit mining plans ahead of MRE updates. This effectively neutralizes short-seller skepticism regarding extreme nugget-effect variability.

@@ -55,3 +55,5 @@ type: knowledge
 - [2026-04-28] Tier 1 gold producers are currently facing a 'reserve crisis' where they are depleting reserves faster than organic replacement; combined with record free cash flows from elevated gold prices, this establishes a strong macro setup for an aggressive M&A cycle targeting advanced, de-risked junior developers.
 
 - [2026-04-28] Gold prices easing concurrently with a weakening U.S. dollar is a historically anomalous divergence. This price action typically indicates immediate institutional liquidity repositioning ahead of central bank rate decisions rather than a fundamental sector breakdown.
+
+- [2026-04-27] Liquidity gating in private credit markets (e.g., BlackRock/Blue Owl) can trigger 'technical flushes' in gold prices as investors sell their most liquid assets to meet redemptions, despite strong underlying commodity fundamentals.

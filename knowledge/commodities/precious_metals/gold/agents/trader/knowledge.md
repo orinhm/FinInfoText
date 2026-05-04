@@ -49,3 +49,5 @@ type: knowledge
 - [2026-04-28] Gold's macroeconomic narrative is structurally shifting from being purely a financial inflation hedge to a 'Strategic Mineral' and sovereign necessity, establishing a new permanent baseline for state-level and institutional accumulation.
 
 - [2026-04-28] A divergence between struggling paper gold (ETFs) and highly profitable physical miners (reporting record cash flows) often signals smart-money rotation into producers, setting up a 'Miner Catch-up' phase where gold equities eventually attract rotational capital.
+
+- [2026-04-28] Gold prices easing concurrently with a falling U.S. dollar is a notable divergence that is typically driven by algorithm-heavy positioning and liquidity adjustments ahead of major Federal Reserve interest rate decisions.
