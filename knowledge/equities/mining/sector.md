@@ -69,3 +69,24 @@ alongside equity analysis frameworks.
 - [2026-04-28] Major mining M&A is expected to heavily favor acquiring existing, safe-jurisdiction production rather than risking the 10-year 'Lassonde Curve' development cycle in hostile regulatory environments.
 
 - [2026-04-29] Retail investors frequently misinterpret the presence of institutional market makers (e.g., Jane Street) in junior miner shareholder registries as coordinated short-selling campaigns, when they are typically acting as high-frequency liquidity providers or hedging ETF positions.
+
+
+## Strategy Patterns
+
+# Executive Strategy Patterns
+
+## Financing Signal Interpretation
+- Bought-deal financing with institutional leads (e.g. EdgePoint, Sprott) = strong institutional confidence
+- Financing above $100M for a junior typically signals transition to development/production
+- Non-dilutive debt (credit facilities, streaming) is preferred over equity at advanced stages
+- Warrant sweeteners on debt are normal; rates below 10% are favorable for juniors
+
+## Insider Activity Signals
+- Insider buying during selloffs = high conviction (especially exercise of warrants settled in cash)
+- Insider selling during rallies = routine and not necessarily bearish unless concentrated
+- Director purchases > 100K shares signal strong belief in near-term catalysts
+
+## M&A Landscape Indicators
+- Majors with depleting reserves and record cash flow are actively shopping
+- Assets with permitted, near-production deposits are premium targets
+- Key metric: in-situ value per ounce vs. acquisition price per ounce

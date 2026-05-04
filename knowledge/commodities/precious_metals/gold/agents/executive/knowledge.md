@@ -57,3 +57,50 @@ type: knowledge
 - [2026-04-28] Gold prices easing concurrently with a weakening U.S. dollar is a historically anomalous divergence. This price action typically indicates immediate institutional liquidity repositioning ahead of central bank rate decisions rather than a fundamental sector breakdown.
 
 - [2026-04-27] Liquidity gating in private credit markets (e.g., BlackRock/Blue Owl) can trigger 'technical flushes' in gold prices as investors sell their most liquid assets to meet redemptions, despite strong underlying commodity fundamentals.
+
+
+## Gold Ma Patterns
+
+# Gold M&A Patterns
+
+## Reserve Crisis Context
+- Major gold producers are depleting reserves faster than replacing them
+- Barrick, Newmont, Agnico Eagle all generating record FCF with depleting mine lives
+- Organic discovery costs exceed $50-80/oz; acquisition of advanced juniors is often cheaper
+
+## Valuation Benchmarks (Gold Juniors)
+- In-situ value: typically $30-80/oz for development-stage, $100-200/oz for near-production
+- Acquisition premiums: 30-60% over 30-day VWAP is typical
+- Key metrics: EV/oz, EV/NPV, IRR at various gold prices
+
+## Sprott-Backed Companies
+- Eric Sprott's involvement often signals quality and provides "activist investor" floor
+- Sprott positions are typically 15-25% of outstanding shares
+- Companies with Sprott backing tend to get premium valuations at acquisition
+
+
+## Lassonde Curve
+
+# Lassonde Curve Reference
+
+## Stage Definitions
+
+| Stage | Typical SP Behavior | Key Catalysts |
+|-------|-------------------|---------------|
+| Discovery | Rapid appreciation | Drill results, initial resource estimate |
+| Orphan Period | Stagnation / decline | Patience; institutional accumulation |
+| Development (PEA/PFS) | Gradual recovery | Economic studies, permitting progress |
+| Construction | Steady climb | Mine build milestones, first gold pour |
+| Production Ramp-Up | Re-rating | Cash flow, actual vs. estimated grades |
+| Mature Producer | Market-following | Reserve replacement, expansion, M&A |
+
+## Stage Transition Signals
+- Orphan → Development: PEA/PFS publication, significant financing secured
+- Development → Construction: environmental permits granted, construction contract awarded
+- Construction → Production: first gold pour, commercial production declared
+- Any stage → M&A exit: major approaches, strategic review announced
+
+## Historical Examples
+- Great Bear Resources: discovered Red Lake deposit, acquired by Kinross during Orphan Period ($1.8B, no MRE)
+- Pretium Resources: Brucejack discovery → Orphan → Production → acquired by Newcrest
+- Fosterville (Kirkland Lake Gold): high-grade orogenic → production → re-rated spectacularly

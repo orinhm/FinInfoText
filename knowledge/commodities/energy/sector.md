@@ -20,3 +20,11 @@ type: knowledge
 - [2026-04-27] Retail sentiment is shifting from pure EV plays toward the 'Energy Complex' (Copper, Lithium, Uranium) and electrical grid infrastructure necessary for AI data centers.
 
 - [2026-04-29] [2026-04-28] During periods of heightened Middle Eastern geopolitical conflict, integrated supermajors can generate 'exceptional oil trading' outsized profits that buffer standard upstream/downstream operational margin compression.
+
+
+## Uranium
+
+# Learnings
+
+
+- [2026-04-29] [2026-04-29] Middle East geopolitical conflict and blockades (e.g., Strait of Hormuz) create a hidden 'black swan' supply constraint for the uranium sector. Sulphur, a byproduct of oil/gas processing heavily shipped through the Middle East, is required to produce sulphuric acid—the critical chemical for In-Situ Recovery (ISR) uranium mining used by massive producers like Kazatomprom. Therefore, oil infrastructure disruption directly constraints ISR uranium supply, tightening the nuclear fuel cycle.

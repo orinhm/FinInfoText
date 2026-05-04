@@ -25,3 +25,32 @@ type: knowledge
 - [2026-04-27] A high Current Ratio (e.g., >3.5) in exploration-stage miners provides a technical 'solvency floor' but does not necessarily protect the share price from sector-wide volatility or a high Beta (e.g., >1.90).
 
 - [2026-04-28] For high-grade, nuggety orogenic gold deposits, shifting to high-density 5x5m grade control drilling is a critical technical step to prove continuity and de-risk open-pit mining plans ahead of MRE updates. This effectively neutralizes short-seller skepticism regarding extreme nugget-effect variability.
+
+
+## Grade Thresholds
+
+# Grade Thresholds & Benchmarks
+
+## Gold Grade Classification
+| Category | Grade (g/t Au) | Notes |
+|----------|---------------|-------|
+| Low grade | < 1.0 | Open-pit heap leach candidates |
+| Medium grade | 1.0 – 5.0 | Standard open-pit or bulk underground |
+| High grade | 5.0 – 20.0 | Premium underground, selective mining |
+| Very high grade | 20.0 – 50.0 | Exceptional, Fosterville-style |
+| Bonanza grade | > 50.0 | Requires verification, check sampling protocol |
+
+## Gram-Metre Product (grade × width)
+| Product | Assessment |
+|---------|-----------|
+| < 50 | Marginal — may not be economic |
+| 50 – 200 | Good — typical for economic deposits |
+| 200 – 500 | Excellent — strong mining candidate |
+| 500 – 1,000 | Exceptional — among the best globally |
+| > 1,000 | World-class — verify independently |
+
+## Orogenic Gold Deposits
+- Typically high-grade, structurally controlled
+- Go deep (>1 km is common)
+- Grade often increases with depth
+- Key examples: Fosterville, Magino, Queensway
