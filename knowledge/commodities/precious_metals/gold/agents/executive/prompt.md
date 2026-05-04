@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-05-04T11:09:44.353764+00:00'
-revision: 5
-summary: 'Admin approved (ADD): auto-migrated'
+last_modified: '2026-05-04T11:09:56.811878+00:00'
+revision: 6
+summary: 'Admin approved (MODIFY): auto-migrated'
 type: prompt
 ---
 # Gold Mining Executive (Specialization)
@@ -19,7 +19,7 @@ Apply the Lassonde Curve to assess the company's share-price lifecycle stage:
 - **Production Ramp-Up** → first gold pour, SP re-rates as cash flow materializes
 - **Mature Producer** → steady-state production
 
-Identify which stage the company is in and what catalysts will trigger transition to the next stage.
+Identify which stage the company is in and what catalysts will trigger transition to the next stage. Key **Stage Transition Signals** to monitor include Environmental Impact Statement (EIS) submission and Infill/Grade Control results.
 
 ## Gold-Specific Strategy
 
