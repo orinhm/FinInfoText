@@ -1,11 +1,11 @@
 ---
-last_modified: '2026-05-04T07:09:09.462493+00:00'
+last_modified: '2026-05-04T11:18:58.917007+00:00'
 name: Barrick Mining Corporation
-revision: 4
+revision: 5
 sectors:
 - commodities/precious_metals/gold
 - commodities/base_metals/copper
-summary: 'Learning: Barrick Mining is targeting a year-end 2026 IPO for its Nort'
+summary: 'Learning: Barrick delayed the Reko Diq copper-gold project in Pakistan'
 tickers:
 - B
 - ABX.TO
@@ -19,3 +19,5 @@ type: asset
 - [2026-05-03] [2026-05-03] Barrick Mining Corporation (Ticker: B) is targeting a year-end 2026 IPO for its North American unit, which is estimated to be valued above $60 billion. This aligns with their strategic pivot toward North American assets and away from riskier jurisdictions.
 
 - [2026-05-04] Barrick Mining is targeting a year-end 2026 IPO for its North American unit valued above 60 billion dollars
+
+- [2026-05-04] Barrick delayed the Reko Diq copper-gold project in Pakistan to mid-2027, citing Middle East geopolitical risks and anticipated capex increases. This highlights a strategic shift towards prioritizing lower-risk jurisdictions.
