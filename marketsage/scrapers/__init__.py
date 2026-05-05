@@ -9,10 +9,12 @@ from __future__ import annotations
 
 import importlib
 import pkgutil
+import threading
 from pathlib import Path
 from typing import Any, Callable
 
 _SCRAPERS: dict[str, Callable[..., list[dict]]] | None = None
+_LOCK = threading.Lock()
 
 
 def _discover() -> dict[str, Callable[..., list[dict]]]:
@@ -21,12 +23,19 @@ def _discover() -> dict[str, Callable[..., list[dict]]]:
     if _SCRAPERS is not None:
         return _SCRAPERS
 
-    _SCRAPERS = {}
-    pkg_path = str(Path(__file__).parent)
-    for _importer, mod_name, _is_pkg in pkgutil.iter_modules([pkg_path]):
-        mod = importlib.import_module(f"marketsage.scrapers.{mod_name}")
-        if hasattr(mod, "fetch"):
-            _SCRAPERS[mod_name] = mod.fetch
+    with _LOCK:
+        # Double-check after acquiring lock (another thread may have finished)
+        if _SCRAPERS is not None:
+            return _SCRAPERS
+
+        registry: dict[str, Callable[..., list[dict]]] = {}
+        pkg_path = str(Path(__file__).parent)
+        for _importer, mod_name, _is_pkg in pkgutil.iter_modules([pkg_path]):
+            mod = importlib.import_module(f"marketsage.scrapers.{mod_name}")
+            if hasattr(mod, "fetch"):
+                registry[mod_name] = mod.fetch
+        # Assign only after fully populated — no partial visibility
+        _SCRAPERS = registry
     return _SCRAPERS
 
 
