@@ -63,7 +63,8 @@ def _fetch_spiels_batch(channel: str, until: int | None = None) -> dict:
     return {}
 
 
-def _scrape_channel(channel: str, days_back: int) -> list[dict]:
+def _scrape_channel(channel: str, days_back: int,
+                    max_posts: int = 5000) -> list[dict]:
     """
     Paginate through the CEO.CA API collecting all spiels
     within the lookback window.
@@ -105,6 +106,10 @@ def _scrape_channel(channel: str, days_back: int) -> list[dict]:
             logger.info("  Reached cutoff date — stopping.")
             break
 
+        if len(all_spiels) >= max_posts:
+            logger.info("  Reached max_posts limit (%d) — stopping.", max_posts)
+            break
+
         until = oldest_ts
         time.sleep(RATE_LIMIT_DELAY)
 
@@ -119,6 +124,7 @@ def _scrape_channel(channel: str, days_back: int) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def fetch(*, channel: str = "nfg", days_back: int = 60,
+          max_posts: int = 5000,
           **_kwargs: Any) -> list[dict]:
     """
     Fetch CEO.CA spiels from the live API.
@@ -129,5 +135,7 @@ def fetch(*, channel: str = "nfg", days_back: int = 60,
         Channel name (e.g. "nfg").
     days_back : int
         How many days back to scrape.
+    max_posts : int
+        Maximum number of posts to fetch. Default: 5000.
     """
-    return _scrape_channel(channel, days_back)
+    return _scrape_channel(channel, days_back, max_posts=max_posts)
