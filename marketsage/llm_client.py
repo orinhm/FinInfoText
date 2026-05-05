@@ -32,7 +32,10 @@ MAX_TOOL_RESULT_CHARS = 200_000
 
 # Chunk size for batch summarization (~50K chars ≈ ~12.5K tokens per chunk,
 # leaving ample room for system prompt + response in a summarization call)
-CHUNK_SIZE_CHARS = 50_000
+CHUNK_SIZE_CHARS = 100_000
+
+# Max parallel condenser LLM calls
+MAX_CONDENSER_WORKERS = 4
 
 
 def _load_settings() -> dict[str, Any]:
@@ -456,7 +459,7 @@ class LLMClient:
         logger.info("  Split into %d chunks (%d chars/chunk max)",
                     len(chunks), CHUNK_SIZE_CHARS)
 
-        # Summarize each chunk
+        # Summarize each chunk — parallel for speed
         system = (
             "You are a data summarizer for an investment analysis system. "
             "Extract ALL key facts, sentiments, events, dates, numbers, "
@@ -466,8 +469,7 @@ class LLMClient:
             "analysis, so be thorough and factual. Do NOT hallucinate."
         )
 
-        summaries: list[str] = []
-        for i, chunk in enumerate(chunks, 1):
+        def _summarize_chunk(i: int, chunk: str) -> tuple[int, str]:
             logger.info("  Condensing chunk %d/%d (%d chars)...",
                         i, len(chunks), len(chunk))
             user_msg = (
@@ -481,10 +483,26 @@ class LLMClient:
                 label=f"condense-{i}/{len(chunks)}",
                 agent_name="condenser",
             )
-            summaries.append(
-                f"## {tool_name} — Condensed Summary (Part {i}/{len(chunks)})\n\n"
-                f"{summary}"
-            )
+            return (i, summary)
+
+        # Run condenser calls in parallel
+        logger.info("  Condensing %d chunks with %d workers...",
+                    len(chunks), min(MAX_CONDENSER_WORKERS, len(chunks)))
+        results: list[tuple[int, str]] = []
+        with ThreadPoolExecutor(max_workers=MAX_CONDENSER_WORKERS) as pool:
+            futures = {
+                pool.submit(_summarize_chunk, i, chunk): i
+                for i, chunk in enumerate(chunks, 1)
+            }
+            for future in as_completed(futures):
+                results.append(future.result())
+
+        # Sort by chunk index to maintain order
+        results.sort(key=lambda r: r[0])
+        summaries = [
+            f"## {tool_name} — Condensed Summary (Part {i}/{len(chunks)})\n\n{summary}"
+            for i, summary in results
+        ]
 
         combined = "\n\n---\n\n".join(summaries)
         logger.info(
