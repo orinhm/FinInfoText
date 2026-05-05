@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-05-03T16:00:00+00:00'
-revision: 5
-summary: Gold sector intelligence — merged from gold/gold.md + gold/macro.md
+last_modified: '2026-05-05T11:23:44.463106+00:00'
+revision: 6
+summary: 'Learning: Contingent Value Rights (CVRs) in mining M&A (e.g., Kinross '
 type: vault
 ---
 # Gold Mining Sector
@@ -23,3 +23,5 @@ type: vault
 - [2026-04-27] A key thematic driver in the Newfoundland gold sector is 'regional consolidation,' frequently identified through overlapping leadership roles, such as Denis Laviolette's involvement with both NFG and Sokoman (SIC).
 
 - [2026-04-27] Enterprise Value per ounce (EV/oz) is a primary metric for peer benchmarking in the junior mining sector (e.g., comparing NFG to Sokoman or Calibre Mining).
+
+- [2026-05-05] Contingent Value Rights (CVRs) in mining M&A (e.g., Kinross acquiring Great Bear) act as a highly volatile, highly leveraged instrument for retail investors. While they offer massive upside if commercial production/resource thresholds are met, they carry expiration risks, no voting rights, no dividends, and often suffer from severe illiquidity and margin restrictions, making them a double-edged sword.
