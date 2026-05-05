@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -590,6 +591,21 @@ def _exec_persist_learning(text: str, target_path: str = "",
     body += f"\n- [{now[:10]}] {text}\n"
     write_with_frontmatter(target, fm, body)
     stamp_and_commit(target, f"Learning: {text[:60]}")
+
+    # ── Centralized learning log ──────────────────────────────────
+    log_file = _KNOWLEDGE_ROOT / "_learning_log.jsonl"
+    log_entry = {
+        "timestamp": now,
+        "target": target_path,
+        "text": text,
+        "run": os.environ.get("MARKETSAGE_RUN_DIR", ""),
+    }
+    try:
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+    except OSError:
+        pass  # non-critical — don't fail the tool
+
     logger.info("  \u2713 persist_learning \u2192 %s", target)
     return f"\u2713 Learning persisted to knowledge/{target_path}"
 

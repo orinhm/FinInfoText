@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -279,6 +280,8 @@ class Orchestrator:
         self.settings = settings or _load_settings()
         self.llm = LLMClient(self.settings)
         self.run_dir = run_dir
+        if run_dir:
+            os.environ["MARKETSAGE_RUN_DIR"] = str(run_dir)
 
     def run(self, user_request: str) -> str:
         """
