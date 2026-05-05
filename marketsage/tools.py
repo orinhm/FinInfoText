@@ -30,9 +30,9 @@ from marketsage.versioning import (
 
 logger = logging.getLogger("marketsage.tools")
 
-_VAULT_ROOT = Path(__file__).parent.parent / "vault"
-_AGENTS_ROOT = Path(__file__).parent / "agents"
+_KNOWLEDGE_ROOT = Path(__file__).parent.parent / "knowledge"
 _PENDING_DIR = Path(__file__).parent.parent / "pending_updates"
+_CUSTOM_SCRAPERS_DIR = Path(__file__).parent / "custom_scrapers"
 
 
 # ---------------------------------------------------------------------------
@@ -86,6 +86,7 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
             },
             "required": ["ticker"],
         },
+        "usage_note": "One call per ticker — do not duplicate calls for the same ticker.",
     },
     {
         "name": "fetch_fred",
@@ -103,36 +104,38 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
                 "series": {
                     "type": "string",
                     "description": (
-                        "FRED series ID or comma-separated list. "
-                        "Common names: fed_funds, 10y_treasury, cpi, "
-                        "unemployment, gdp, gold_price, oil_wti, "
-                        "consumer_sentiment, vix, m2, mortgage_30y."
+                        "Series to fetch. Common names: 'cpi', 'gold_price', "
+                        "'fed_funds', 'unemployment', 'gdp', 'oil_price', "
+                        "'housing_starts', '10y_yield', 'sp500'. "
+                        "Or use a FRED series ID directly, e.g. 'CPIAUCSL'."
                     ),
                 },
                 "query": {
                     "type": "string",
-                    "description": "Search query to find relevant FRED series (e.g. 'copper price').",
+                    "description": (
+                        "Search query to find relevant FRED series, "
+                        "e.g. 'copper price', 'china gdp', 'inflation expectations'."
+                    ),
                 },
                 "days_back": {
                     "type": "integer",
-                    "description": "How far back to look. Default: 365.",
+                    "description": "How many days of data to fetch. Default: 365.",
                 },
             },
         },
+        "usage_note": "Batch related series into a single call when possible.",
     },
     {
         "name": "fetch_nfg_news",
         "description": (
-            "Fetch official press releases from NewFoundGold Corp "
-            "(https://newfoundgold.ca/news-releases/). Use this specifically "
-            "for NewFoundGold / NFGC / NFG news releases and corporate announcements."
+            "Fetch NewFoundGold Corp official news releases and press coverage."
         ),
         "parameters": {
             "type": "object",
             "properties": {
                 "days_back": {
                     "type": "integer",
-                    "description": "How many days back to scrape. Default: 60.",
+                    "description": "How many days back. Default: 60.",
                 },
             },
         },
@@ -140,48 +143,40 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
     {
         "name": "fetch_web_news",
         "description": (
-            "Fetch news articles from any website by scraping article listings "
-            "and extracting full text. Works with most news sites: mining.com, "
-            "kitco.com, seekingalpha.com, marketwatch.com, northernminer.com, "
-            "rigzone.com, oilprice.com, and generic WordPress sites. "
-            "Requires a URL and optionally a search query."
+            "Fetch news articles from any website URL. "
+            "Use for mining.com, kitco, reuters, seekingalpha, etc."
         ),
         "parameters": {
             "type": "object",
             "properties": {
                 "url": {
                     "type": "string",
-                    "description": (
-                        "Website URL to scrape, e.g. 'https://www.mining.com', "
-                        "'https://www.kitco.com/news'."
-                    ),
+                    "description": "Website URL to scrape.",
                 },
                 "query": {
                     "type": "string",
-                    "description": "Search query, e.g. a ticker or topic like 'gold mining'.",
+                    "description": "Optional search/filter query.",
                 },
                 "days_back": {
                     "type": "integer",
-                    "description": "How far back to look. Default: 30.",
+                    "description": "How many days back. Default: 30.",
                 },
                 "max_articles": {
                     "type": "integer",
-                    "description": "Maximum articles to fetch. Default: 30.",
+                    "description": "Max articles. Default: 30.",
                 },
             },
             "required": ["url"],
         },
+        "usage_note": "Vary search queries rather than repeating the same one.",
     },
 
-    # ── Vault / Knowledge tools ───────────────────────────────────────
+    # ── Knowledge tools ───────────────────────────────────────────────
     {
-        "name": "read_vault_file",
+        "name": "read_knowledge",
         "description": (
-            "Read a markdown file from the knowledge vault. "
-            "The vault is hierarchically organized: "
-            "vault/commodities/, vault/equities/, vault/mining/, etc. "
-            "Each level has .md files with accumulated intelligence. "
-            "Use this to check existing knowledge before analyzing."
+            "Read any file from the knowledge tree. Works for sector files, "
+            "asset files, agent prompts, and learnings."
         ),
         "parameters": {
             "type": "object",
@@ -189,9 +184,8 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
                 "path": {
                     "type": "string",
                     "description": (
-                        "Relative path within the vault directory, "
-                        "e.g. 'commodities/precious_metals/gold/assets/nfgc.md' "
-                        "or '_index.json'."
+                        "Relative path within knowledge/, e.g. "
+                        "'commodities/precious_metals/gold/sector.md'."
                     ),
                 },
             },
@@ -199,10 +193,10 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
         },
     },
     {
-        "name": "list_vault_contents",
+        "name": "list_knowledge",
         "description": (
-            "List files and subdirectories in a vault directory. "
-            "Use this to discover what knowledge exists in the vault."
+            "List files and subdirectories in a knowledge directory. "
+            "Use this to discover what sectors, agents, and data exist."
         ),
         "parameters": {
             "type": "object",
@@ -210,8 +204,9 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
                 "path": {
                     "type": "string",
                     "description": (
-                        "Relative path within the vault directory to list, "
-                        "e.g. '' for root, 'commodities/', 'equities/'."
+                        "Relative path within knowledge/ to list, "
+                        "e.g. '' for root, 'commodities/', "
+                        "'commodities/precious_metals/gold/agents/'."
                     ),
                 },
             },
@@ -221,11 +216,8 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
         "name": "persist_learning",
         "description": (
             "Persist a new piece of knowledge learned during analysis. "
-            "This appends a timestamped learning to the appropriate vault "
-            "or agent knowledge file. Use this when you discover important "
-            "facts, patterns, or insights that should be remembered for "
-            "future analyses. Be selective — only persist genuinely new "
-            "and useful knowledge."
+            "Appends a timestamped learning to the specified file in the "
+            "knowledge tree. Be selective — only persist genuinely new insights."
         ),
         "parameters": {
             "type": "object",
@@ -234,117 +226,203 @@ TOOL_DECLARATIONS: list[dict[str, Any]] = [
                     "type": "string",
                     "description": "The knowledge to persist. Be specific and factual.",
                 },
-                "level": {
-                    "type": "string",
-                    "enum": ["asset", "sector", "generic"],
-                    "description": (
-                        "Where to store: 'asset' = specific ticker vault file, "
-                        "'sector' = sector-level knowledge, "
-                        "'generic' = general knowledge applicable broadly."
-                    ),
-                },
-                "vault_path": {
+                "target_path": {
                     "type": "string",
                     "description": (
-                        "For asset/sector level: vault path, "
-                        "e.g. 'commodities/precious_metals/gold/assets/nfgc.md'."
-                    ),
-                },
-                "agent_path": {
-                    "type": "string",
-                    "description": (
-                        "For generic level: agent path, "
-                        "e.g. 'trader' or 'accountant/mining'."
+                        "Path within knowledge/ to persist to. Examples: "
+                        "'commodities/precious_metals/gold/sector.md' (sector), "
+                        "'commodities/precious_metals/gold/juniors/assets/nfgc.md' (asset), "
+                        "'commodities/precious_metals/gold/agents/executive/knowledge.md' (agent), "
+                        "'agents/geopolitical/knowledge.md' (cross-sector generic)."
                     ),
                 },
             },
-            "required": ["text", "level"],
+            "required": ["text", "target_path"],
         },
     },
 
-    # ── Agent info tools ──────────────────────────────────────────────
+    # ── Agent & sector tools ─────────────────────────────────────────
     {
         "name": "list_available_scrapers",
         "description": (
             "List all available data scrapers. Returns their names "
-            "and brief descriptions. Call this early if you need to "
-            "decide which data sources to use."
+            "and brief descriptions."
         ),
         "parameters": {"type": "object", "properties": {}},
     },
     {
-        "name": "read_agent_knowledge",
+        "name": "load_agent",
         "description": (
-            "Read the prompt and accumulated knowledge for a specific "
-            "agent persona. Use this to adopt a specialist perspective "
-            "when analyzing data (e.g. read the 'trader' agent to think "
-            "like a market trader, or 'auditor/geologist' for geological "
-            "expertise)."
+            "Load and compose a specialist agent persona. Combines the "
+            "base role framework (from agents/) with sector-specific "
+            "specialization and cross-sector inherited knowledge. Returns "
+            "the full agent prompt with all accumulated knowledge."
         ),
         "parameters": {
             "type": "object",
             "properties": {
-                "agent_path": {
+                "role": {
                     "type": "string",
                     "description": (
-                        "Agent path, e.g. 'trader', 'accountant/mining', "
-                        "'executive/gold', 'auditor/geologist', 'librarian'."
+                        "Agent role: 'accountant', 'executive', 'trader', "
+                        "'auditor', 'geopolitical', 'librarian'."
+                    ),
+                },
+                "sector_path": {
+                    "type": "string",
+                    "description": (
+                        "Optional sector path, e.g. "
+                        "'commodities/precious_metals/gold', 'equities/tech'. "
+                        "If omitted, loads base role only."
                     ),
                 },
             },
-            "required": ["agent_path"],
+            "required": ["role"],
         },
     },
     {
-        "name": "create_agent_specialization",
+        "name": "create_custom_scraper",
         "description": (
-            "Create a new specialist sub-agent under an existing base agent. "
-            "Use this when you encounter a sector or domain that has no "
-            "existing specialization. For example, if you are analyzing a "
-            "tech company but only 'executive' exists (no 'executive/tech'), "
-            "call this to create 'executive/tech' with a tailored prompt. "
-            "The new agent inherits the base agent's prompt and knowledge, "
-            "and becomes immediately available for future analyses. "
-            "Only create specializations when genuinely needed — i.e., when "
-            "sector-specific analytical frameworks would meaningfully improve "
-            "the analysis beyond what the base agent provides."
+            "Create a new reusable web scraper tool with preset URL/params."
         ),
         "parameters": {
             "type": "object",
             "properties": {
-                "base_agent": {
+                "name": {"type": "string", "description": "Tool name, must start with 'fetch_'."},
+                "description": {"type": "string", "description": "What this scraper does."},
+                "base_url": {"type": "string", "description": "The base URL to scrape."},
+                "default_query": {"type": "string", "description": "Default search query."},
+                "default_days_back": {"type": "integer", "description": "Default days back. Default: 30."},
+                "default_max_articles": {"type": "integer", "description": "Default max articles. Default: 20."},
+            },
+            "required": ["name", "description", "base_url"],
+        },
+    },
+    {
+        "name": "propose_new_tool",
+        "description": "Propose a new tool that requires custom implementation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "tool_name": {"type": "string", "description": "Proposed tool name."},
+                "description": {"type": "string", "description": "What this tool should do."},
+                "data_source": {"type": "string", "description": "URL or API endpoint."},
+                "parameters_needed": {"type": "string", "description": "Parameters the tool needs."},
+                "rationale": {"type": "string", "description": "Why web scraper isn't sufficient."},
+            },
+            "required": ["tool_name", "description", "data_source", "rationale"],
+        },
+    },
+    {
+        "name": "create_sector_agent",
+        "description": (
+            "Create a new sector-specialized agent under a sector's agents/ dir. "
+            "Example: create_sector_agent(sector_path='equities/fintech', role='accountant', ...)"
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sector_path": {"type": "string", "description": "Sector path, e.g. 'equities/fintech'."},
+                "role": {"type": "string", "description": "Agent role: 'accountant', 'executive', etc."},
+                "sector_description": {"type": "string", "description": "Description of the sector."},
+                "key_metrics": {"type": "string", "description": "Sector-specific metrics."},
+                "inherits_from": {"type": "string", "description": "Optional parent sector, e.g. 'mining'."},
+            },
+            "required": ["sector_path", "role", "sector_description"],
+        },
+    },
+    {
+        "name": "create_sector",
+        "description": (
+            "Create a new sector or sub-sector directory with sector.md and agents/ dir. "
+            "Use this when you discover a new domain that needs its own branch in the knowledge tree. "
+            "Example: create_sector(sector_path='equities/biotech', title='Biotechnology', ...)"
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sector_path": {
                     "type": "string",
                     "description": (
-                        "The base agent to specialize, e.g. 'executive', "
-                        "'trader', 'accountant', 'auditor'. Must be an "
-                        "existing top-level agent."
+                        "Path for the new sector relative to knowledge/, "
+                        "e.g. 'equities/biotech' or 'commodities/precious_metals/platinum'."
                     ),
                 },
-                "specialization": {
+                "title": {
                     "type": "string",
-                    "description": (
-                        "Name of the new specialization (lowercase, no spaces), "
-                        "e.g. 'tech', 'energy', 'biotech', 'real_estate'."
-                    ),
+                    "description": "Human-readable sector title, e.g. 'Biotechnology'.",
                 },
-                "sector_description": {
+                "description": {
                     "type": "string",
-                    "description": (
-                        "A description of the sector/domain this specialist "
-                        "covers, e.g. 'Technology sector including SaaS, "
-                        "semiconductors, consumer electronics, and AI companies'."
-                    ),
+                    "description": "Initial sector intelligence — what makes this sector unique.",
                 },
-                "key_metrics": {
+                "inherits": {
                     "type": "string",
                     "description": (
-                        "Sector-specific metrics and frameworks this specialist "
-                        "should focus on, e.g. 'ARR, DAU/MAU, net retention, "
-                        "TAM, rule of 40, burn multiple'."
+                        "Comma-separated list of sector paths to inherit from. "
+                        "E.g. 'commodities/precious_metals,equities' for a mining sub-sector. "
+                        "Leave empty if no cross-sector inheritance is needed."
                     ),
                 },
             },
-            "required": ["base_agent", "specialization", "sector_description"],
+            "required": ["sector_path", "title", "description"],
+        },
+    },
+    {
+        "name": "propose_prompt_change",
+        "description": (
+            "Propose a change to an agent's prompt.md file. The proposal is saved "
+            "for human review via 'python -m marketsage.admin'. Do NOT modify "
+            "prompt.md directly — always use this tool for prompt evolution. "
+            "Changes will be applied by an admin after review."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "target_prompt": {
+                    "type": "string",
+                    "description": (
+                        "Path to the prompt file, e.g. "
+                        "'agents/trader/prompt.md' or "
+                        "'equities/mining/agents/accountant/prompt.md'."
+                    ),
+                },
+                "change_type": {
+                    "type": "string",
+                    "description": "One of: ADD, MODIFY, REMOVE.",
+                },
+                "proposed_content": {
+                    "type": "string",
+                    "description": "The proposed new/modified prompt content.",
+                },
+                "reasoning": {
+                    "type": "string",
+                    "description": "Why this change would improve the agent.",
+                },
+                "proposed_by": {
+                    "type": "string",
+                    "description": "The agent role proposing this change, e.g. 'trader'.",
+                },
+            },
+            "required": ["target_prompt", "change_type", "proposed_content", "reasoning"],
+        },
+    },
+    {
+        "name": "read_sector_context",
+        "description": (
+            "Load ALL available knowledge about a sector in one call. "
+            "Returns sector files, asset knowledge, available agent roles, "
+            "and relevant scrapers. Use this EARLY in analysis."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sector": {
+                    "type": "string",
+                    "description": "Sector keyword, e.g. 'gold', 'tech', 'copper', 'pharma'.",
+                },
+            },
+            "required": ["sector"],
         },
     },
 ]
@@ -420,246 +498,784 @@ def _exec_fetch_web_news(url: str, query: str = "",
     return text
 
 
-def _exec_read_vault_file(path: str, **_kw) -> str:
-    """Read a vault file."""
-    target = _VAULT_ROOT / path.lstrip("/")
-    logger.info("  🔧 Tool: read_vault_file(%s)", target)
+def _exec_read_knowledge(path: str, **_kw) -> str:
+    """Read any file from the knowledge tree."""
+    target = _KNOWLEDGE_ROOT / path.lstrip("/")
+    logger.info("  \U0001f527 Tool: read_knowledge(%s)", path)
     if not target.exists():
-        return f"(File not found: vault/{path})"
+        return f"(File not found: knowledge/{path})"
     if not target.is_file():
-        return f"(Not a file: vault/{path} — use list_vault_contents to browse directories)"
-    # Security: ensure path stays within vault
+        return f"(Not a file: knowledge/{path} \u2014 use list_knowledge to browse)"
     try:
-        target.resolve().relative_to(_VAULT_ROOT.resolve())
+        target.resolve().relative_to(_KNOWLEDGE_ROOT.resolve())
     except ValueError:
-        return "(Error: path escapes the vault directory)"
+        return "(Error: path escapes the knowledge directory)"
     content = target.read_text(encoding="utf-8")
-    logger.info("  ✓ read_vault_file: %d chars", len(content))
+    logger.info("  \u2713 read_knowledge: %d chars", len(content))
     return content
 
 
-def _exec_list_vault_contents(path: str = "", **_kw) -> str:
-    """List vault directory contents."""
-    target = _VAULT_ROOT / path.lstrip("/")
-    logger.info("  🔧 Tool: list_vault_contents(%s)", target)
+def _exec_list_knowledge(path: str = "", **_kw) -> str:
+    """List knowledge directory contents."""
+    target = _KNOWLEDGE_ROOT / path.lstrip("/")
+    logger.info("  \U0001f527 Tool: list_knowledge(%s)", path)
     if not target.exists():
-        return f"(Directory not found: vault/{path})"
+        return f"(Directory not found: knowledge/{path})"
     if not target.is_dir():
-        return f"(Not a directory: vault/{path})"
-
+        return f"(Not a directory: knowledge/{path})"
     entries: list[str] = []
     for item in sorted(target.iterdir()):
         if item.name.startswith(".") or item.name == "__pycache__":
             continue
-        kind = "📁" if item.is_dir() else "📄"
+        kind = "\U0001f4c1" if item.is_dir() else "\U0001f4c4"
         size = f" ({item.stat().st_size} bytes)" if item.is_file() else ""
         entries.append(f"  {kind} {item.name}{size}")
-
-    result = f"Contents of vault/{path}:\n" + "\n".join(entries) if entries else f"(Empty directory: vault/{path})"
-    return result
+    return f"Contents of knowledge/{path}:\n" + "\n".join(entries) if entries else f"(Empty: knowledge/{path})"
 
 
-def _exec_persist_learning(text: str, level: str,
-                           vault_path: str = "", agent_path: str = "",
-                           **_kw) -> str:
-    """Persist a learning to vault or agent knowledge."""
+def _exec_persist_learning(text: str, target_path: str = "",
+                           level: str = "", vault_path: str = "",
+                           agent_path: str = "", **_kw) -> str:
+    """Persist a learning to the knowledge tree with dedup guard."""
+    from marketsage.curator import jaccard_similarity
+
     now = datetime.now(timezone.utc).isoformat()
-    logger.info("  🔧 Tool: persist_learning(level=%s, text=%s...)", level, text[:60])
+    # Legacy compat
+    if not target_path:
+        if vault_path:
+            target_path = vault_path
+        elif agent_path and level == "generic":
+            role = agent_path.strip("/").split("/")[0]
+            target_path = f"agents/{role}/knowledge.md"
+        else:
+            return "(Error: target_path is required)"
 
-    if level == "asset" or level == "sector":
-        if not vault_path:
-            return "(Error: vault_path is required for asset/sector level learnings)"
-        target = _VAULT_ROOT / vault_path.lstrip("/")
-    elif level == "generic":
-        if not agent_path:
-            return "(Error: agent_path is required for generic level learnings)"
-        parts = agent_path.strip("/").split("/")
-        target = _AGENTS_ROOT / parts[0] / "knowledge" / "learned.md"
-    else:
-        return f"(Error: unknown level '{level}'. Use: asset, sector, generic)"
+    # Block attempts to write directly to prompt.md — route to propose_prompt_change
+    if target_path.endswith("prompt.md"):
+        return (
+            "(Error: Do not persist learnings to prompt.md files directly. "
+            "Use the propose_prompt_change tool instead to propose prompt modifications.)"
+        )
 
-    # Read or create file
+    logger.info("  \U0001f527 Tool: persist_learning(target=%s, text=%s...)",
+                target_path, text[:60])
+    target = _KNOWLEDGE_ROOT / target_path.lstrip("/")
+    try:
+        target.resolve().relative_to(_KNOWLEDGE_ROOT.resolve())
+    except ValueError:
+        return "(Error: path escapes the knowledge directory)"
+    target.parent.mkdir(parents=True, exist_ok=True)
     if target.exists():
         fm, body = read_frontmatter(target)
     else:
-        fm = {
-            "type": "knowledge",
-            "revision": 0,
-            "last_modified": now,
-            "summary": "Auto-generated learnings",
-        }
+        fm = {"type": "knowledge", "revision": 0,
+              "last_modified": now, "summary": "Auto-generated learnings"}
         body = "# Learnings\n\n"
 
-    # Append learning
+    # Dedup guard — check Jaccard similarity against existing bullets
+    existing_bullets = [
+        ln.strip()
+        for ln in body.splitlines()
+        if ln.strip().startswith("- [") and len(ln.strip()) > 10
+    ]
+    for existing in existing_bullets:
+        if jaccard_similarity(text, existing) >= 0.60:
+            logger.info("  \u26a0 Duplicate detected, skipping persist")
+            return (
+                f"\u26a0 Skipped — this learning is too similar to an existing entry "
+                f"in knowledge/{target_path}. The knowledge tree already contains "
+                f"this insight."
+            )
+
     body += f"\n- [{now[:10]}] {text}\n"
     write_with_frontmatter(target, fm, body)
     stamp_and_commit(target, f"Learning: {text[:60]}")
-    logger.info("  ✓ persist_learning → %s", target)
-    return f"✓ Learning persisted to {target.relative_to(Path(__file__).parent.parent)}"
+    logger.info("  \u2713 persist_learning \u2192 %s", target)
+    return f"\u2713 Learning persisted to knowledge/{target_path}"
 
 
 def _exec_list_available_scrapers(**_kw) -> str:
-    """List all available scrapers."""
-    logger.info("  🔧 Tool: list_available_scrapers()")
+    """List all available scrapers, including custom and generated tools."""
+    logger.info("  \U0001f527 Tool: list_available_scrapers()")
     from marketsage.scrapers import list_scrapers
     scrapers = list_scrapers()
     lines = [
-        "Available data scrapers:",
-        "",
-        "- **ceo_ca**: CEO.CA forum discussions (spiels) — retail sentiment, message boards",
-        "- **yahoo_finance**: Stock data, financials, news, analyst recommendations",
-        "- **fred**: Federal Reserve Economic Data — macroeconomic indicators (800K+ series)",
-        "- **nfg_news**: NewFoundGold Corp official press releases",
-        "- **web_news**: Generic web/news article scraper (mining.com, kitco, etc.)",
-        "",
-        f"Registry contains: {scrapers}",
+        "## Built-in Data Scrapers", "",
+        "- **ceo_ca**: CEO.CA forum discussions",
+        "- **yahoo_finance**: Stock data, financials, news",
+        "- **fred**: FRED macroeconomic indicators (800K+ series)",
+        "- **nfg_news**: NewFoundGold Corp press releases",
+        "- **web_news**: Generic web/news article scraper", "",
+        f"Scraper registry: {scrapers}",
     ]
+    if _CUSTOM_SCRAPERS_DIR.is_dir():
+        custom_files = sorted(_CUSTOM_SCRAPERS_DIR.glob("*.json"))
+        if custom_files:
+            lines.extend(["", "## Custom Scrapers", ""])
+            for cf in custom_files:
+                try:
+                    with open(cf, encoding="utf-8") as f:
+                        cfg = json.load(f)
+                    lines.append(f"- **{cf.stem}**: {cfg.get('description', '?')}")
+                except Exception:
+                    lines.append(f"- **{cf.stem}**: (config error)")
+    _gen_dir = Path(__file__).parent / "generated_tools"
+    if _gen_dir.is_dir():
+        gen_files = sorted(_gen_dir.glob("*.json"))
+        if gen_files:
+            lines.extend(["", "## Generated Tools", ""])
+            for gf in gen_files:
+                try:
+                    with open(gf, encoding="utf-8") as f:
+                        m = json.load(f)
+                    lines.append(f"- **{gf.stem}**: {m.get('declaration',{}).get('description','?')}")
+                except Exception:
+                    lines.append(f"- **{gf.stem}**: (error)")
     return "\n".join(lines)
 
 
-def _exec_read_agent_knowledge(agent_path: str, **_kw) -> str:
-    """Read an agent's prompt and knowledge."""
-    logger.info("  🔧 Tool: read_agent_knowledge(%s)", agent_path)
+def _exec_load_agent(role: str, sector_path: str = "", **_kw) -> str:
+    """Load and compose a specialist agent persona."""
+    logger.info("  \U0001f527 Tool: load_agent(role=%s, sector=%s)", role, sector_path)
     try:
-        from marketsage.agent import Agent
-        agent = Agent(agent_path)
-        prompt = agent.system_prompt
-        return f"# Agent: {agent_path}\n\n{prompt}"
-    except FileNotFoundError:
-        # List available agents
-        from marketsage.agent import discover_agents
-        available = sorted(discover_agents().keys())
-        return (
-            f"(Agent '{agent_path}' not found. "
-            f"Available agents: {available})"
-        )
+        from marketsage.agent import Agent, discover_sector_agents
+        agent = Agent(role=role, sector_path=sector_path or None)
+        return f"# Agent: {agent}\n\n{agent.system_prompt}"
+    except Exception as exc:
+        from marketsage.agent import discover_all_sectors
+        available = discover_all_sectors()
+        return f"(Error loading agent: {exc}. Available sectors: {available})"
 
 
-def _exec_create_agent_specialization(
-    base_agent: str,
-    specialization: str,
-    sector_description: str,
-    key_metrics: str = "",
-    **_kw,
-) -> str:
-    """Create a new sub-agent specialization under an existing base agent."""
-    import re
-    logger.info("  🔧 Tool: create_agent_specialization(%s/%s)",
-                base_agent, specialization)
+def _exec_read_sector_context(sector: str, **_kw) -> str:
+    """Load all available knowledge about a sector from the unified tree."""
+    sector = sector.strip().lower()
+    logger.info("  \U0001f527 Tool: read_sector_context(%s)", sector)
+    sections: list[str] = [f"# Sector Context: {sector.title()}\n"]
 
-    # Sanitize inputs
-    base_agent = base_agent.strip().strip("/")
-    specialization = re.sub(r'[^a-z0-9_]', '_', specialization.strip().lower())
+    # 1. Knowledge files (sector.md, assets, macro)
+    knowledge_files: list[tuple[str, str]] = []
+    for md_file in sorted(_KNOWLEDGE_ROOT.rglob("*.md")):
+        rel = str(md_file.relative_to(_KNOWLEDGE_ROOT))
+        # Skip agent files in this section
+        if "/agents/" in rel:
+            continue
+        if sector in rel.lower() or sector in md_file.stem.lower():
+            try:
+                content = md_file.read_text(encoding="utf-8")
+                if len(content) > 2000:
+                    content = content[:2000] + f"\n\n... (truncated, {len(content)} total chars)"
+                knowledge_files.append((rel, content))
+            except Exception:
+                knowledge_files.append((rel, "(read error)"))
 
-    # Validate base agent exists
-    base_dir = _AGENTS_ROOT / base_agent
-    if not base_dir.is_dir():
-        from marketsage.agent import discover_agents
-        available = [k for k in discover_agents() if '/' not in k]
-        return (
-            f"(Error: base agent '{base_agent}' not found. "
-            f"Available base agents: {available})"
-        )
-
-    # Check if specialization already exists
-    spec_dir = base_dir / specialization
-    if spec_dir.is_dir() and (spec_dir / "prompt.md").exists():
-        return (
-            f"(Agent '{base_agent}/{specialization}' already exists. "
-            f"Use read_agent_knowledge to view it, or persist_learning "
-            f"to add knowledge to it.)"
-        )
-
-    # Read the base agent's prompt to derive the specialization
-    base_prompt_file = base_dir / "prompt.md"
-    if base_prompt_file.exists():
-        base_content = base_prompt_file.read_text(encoding="utf-8")
-        # Strip frontmatter to get the core prompt
-        if base_content.startswith("---"):
-            end = base_content.find("---", 3)
-            if end > 0:
-                base_body = base_content[end + 3:].strip()
-            else:
-                base_body = base_content
-        else:
-            base_body = base_content
+    if knowledge_files:
+        sections.append("## Sector Knowledge\n")
+        for rel, content in knowledge_files:
+            sections.extend([f"### {rel}\n", content, ""])
     else:
-        base_body = f"(Base prompt for '{base_agent}' not found)"
+        sections.append(f"## Sector Knowledge\n\n(No files matching '{sector}')\n")
 
-    # Build the specialized prompt
+    # 2. Agent specializations
+    from marketsage.agent import discover_all_sectors
+    all_sectors = discover_all_sectors()
+    matching_sectors: list[tuple[str, list[str]]] = []
+    for sp, roles in sorted(all_sectors.items()):
+        if sector in sp.lower():
+            matching_sectors.append((sp, roles))
+
+    if matching_sectors:
+        sections.append("## Agent Specializations\n")
+        for sp, roles in matching_sectors:
+            sections.append(f"- **{sp}**: {', '.join(roles)}")
+            # Show recent learnings
+            for role in roles:
+                learned = _KNOWLEDGE_ROOT / sp / "agents" / role / "knowledge.md"
+                if learned.exists():
+                    try:
+                        _, body = read_frontmatter(learned)
+                        learnings = [l.strip() for l in body.strip().split("\n") if l.strip().startswith("- [")]
+                        if learnings:
+                            sections.append(f"  *{role} learnings ({len(learnings)}):*")
+                            for l in learnings[-3:]:
+                                sections.append(f"  {l}")
+                    except Exception:
+                        pass
+            sections.append("")
+    else:
+        sections.append(f"## Agent Specializations\n\n(No agents matching '{sector}'. "
+                        f"Use create_sector_agent to create one.)\n")
+
+    # 3. Scrapers
+    matching_scrapers: list[str] = []
+    if _CUSTOM_SCRAPERS_DIR.is_dir():
+        for cf in sorted(_CUSTOM_SCRAPERS_DIR.glob("*.json")):
+            if sector in cf.stem.lower():
+                try:
+                    with open(cf, encoding="utf-8") as f:
+                        cfg = json.load(f)
+                    matching_scrapers.append(f"- Custom: **{cf.stem}** \u2014 {cfg.get('description','')}")
+                except Exception:
+                    matching_scrapers.append(f"- Custom: **{cf.stem}**")
+    if matching_scrapers:
+        sections.append("## Sector-Specific Tools\n")
+        sections.extend(matching_scrapers)
+        sections.append("")
+
+    result = "\n".join(sections)
+    logger.info("  \u2713 read_sector_context('%s') returned %d chars "
+                "(%d knowledge files, %d sector agents)",
+                sector, len(result), len(knowledge_files), len(matching_sectors))
+    return result
+
+
+def _exec_create_sector_agent(
+    sector_path: str, role: str, sector_description: str,
+    key_metrics: str = "", inherits_from: str = "", **_kw,
+) -> str:
+    """Create a new sector-specialized agent."""
+    import re as _re
+    logger.info("  \U0001f527 Tool: create_sector_agent(%s, %s)", sector_path, role)
+    role = _re.sub(r"[^a-z0-9_]", "_", role.strip().lower())
+    sector_path = sector_path.strip().strip("/")
+
+    agent_dir = _KNOWLEDGE_ROOT / sector_path / "agents" / role
+    if (agent_dir / "prompt.md").exists():
+        return f"(Agent '{sector_path}/agents/{role}' already exists. Use load_agent to view it.)"
+
+    # Validate base role exists
+    base_dir = _KNOWLEDGE_ROOT / "agents" / role
+    if not (base_dir / "prompt.md").exists():
+        from marketsage.agent import discover_sector_agents
+        available = discover_sector_agents()
+        return f"(Base role '{role}' not found. Available: {available})"
+
     now = datetime.now(timezone.utc)
-    title = specialization.replace('_', ' ').title()
+    title = sector_path.split("/")[-1].replace("_", " ").title()
 
     metrics_section = ""
     if key_metrics:
-        metrics_section = (
-            f"\n## Sector-Specific Metrics\n\n"
-            f"When analyzing {title} sector assets, prioritize these metrics:\n"
-            f"- {key_metrics}\n"
-        )
+        metrics_section = f"\n## Sector-Specific Metrics\n\n- {key_metrics}\n"
 
-    spec_prompt = (
-        f"---\n"
-        f"type: prompt\n"
-        f"revision: 1\n"
+    inherits_line = ""
+    if inherits_from:
+        inherits_line = f"inherits_from: {inherits_from}\n"
+
+    prompt_content = (
+        f"---\ntype: prompt\nrevision: 1\n"
         f"last_modified: {now.isoformat()}\n"
-        f"summary: \"{title} specialization of {base_agent}\"\n"
-        f"---\n"
-        f"# {base_agent.title()} — {title} Specialist\n\n"
-        f"You are a **{title} Specialist** — a sector-focused variant of the "
-        f"{base_agent.title()} agent, tailored for the {title} sector.\n\n"
-        f"## Sector Focus\n\n"
-        f"{sector_description}\n"
-        f"{metrics_section}\n"
-        f"## Base Framework\n\n"
-        f"You inherit the following analytical framework from the base "
-        f"{base_agent} agent. Apply it through the lens of the {title} sector:\n\n"
-        f"{base_body}\n"
+        f"{inherits_line}"
+        f'summary: "{title} {role} specialist"\n---\n'
+        f"# {title} — {role.title()} Specialist\n\n"
+        f"## Sector Focus\n\n{sector_description}\n"
+        f"{metrics_section}"
     )
+    knowledge_content = (
+        f"---\ntype: knowledge\nrevision: 0\n"
+        f"last_modified: {now.isoformat()}\n"
+        f'summary: "Learnings for {sector_path}/{role}"\n---\n'
+        f"# Learnings — {title} {role.title()}\n\n"
+    )
+
+    agent_dir.mkdir(parents=True, exist_ok=True)
+    (agent_dir / "prompt.md").write_text(prompt_content, encoding="utf-8")
+    (agent_dir / "knowledge.md").write_text(knowledge_content, encoding="utf-8")
+
+    try:
+        stamp_and_commit(agent_dir / "prompt.md", f"New agent: {sector_path}/{role}")
+    except Exception:
+        pass
+
+    logger.info("  \u2713 Created sector agent: %s/agents/%s", sector_path, role)
+    return (
+        f"\u2713 Created sector agent: {sector_path}/agents/{role}\n"
+        f"  \U0001f4c4 Prompt: knowledge/{sector_path}/agents/{role}/prompt.md\n"
+        f"  \U0001f4c4 Knowledge: knowledge/{sector_path}/agents/{role}/knowledge.md\n\n"
+        f"Use load_agent(role='{role}', sector_path='{sector_path}') to load it."
+    )
+
+def _exec_create_sector(sector_path: str, title: str, description: str,
+                        inherits: str = "", **_kw) -> str:
+    """Create a new sector directory with sector.md and agents/ dir."""
+    logger.info("  🔧 Tool: create_sector(%s, title=%s)", sector_path, title)
+
+    sector_dir = _KNOWLEDGE_ROOT / sector_path.strip("/")
+
+    # Safety: prevent path escape
+    try:
+        sector_dir.resolve().relative_to(_KNOWLEDGE_ROOT.resolve())
+    except ValueError:
+        return "(Error: path escapes the knowledge directory)"
+
+    sector_file = sector_dir / "sector.md"
+    if sector_file.exists():
+        return f"(Sector '{sector_path}' already exists — sector.md found.)"
+
+    # Parse inherits
+    inherits_list = [
+        s.strip() for s in inherits.split(",") if s.strip()
+    ] if inherits else []
+
+    # Validate inherited sectors exist
+    for inh in inherits_list:
+        inh_dir = _KNOWLEDGE_ROOT / inh
+        if not inh_dir.is_dir():
+            return f"(Error: inherited sector '{inh}' does not exist.)"
+
+    # Build frontmatter
+    now = datetime.now(timezone.utc)
+    fm_lines = [
+        "---",
+        f"last_modified: '{now.isoformat()}'",
+        "revision: 1",
+        f"summary: '{title} sector knowledge'",
+        "type: knowledge",
+    ]
+    if inherits_list:
+        fm_lines.append("inherits:")
+        for inh in inherits_list:
+            fm_lines.append(f"  - {inh}")
+    fm_lines.append("---")
+
+    body = f"\n# {title}\n\n{description}\n\n## Learnings\n\n*(none yet)*\n"
+
+    content = "\n".join(fm_lines) + body
 
     # Create directory structure
-    spec_dir.mkdir(parents=True, exist_ok=True)
-    knowledge_dir = spec_dir / "knowledge"
-    knowledge_dir.mkdir(exist_ok=True)
+    sector_dir.mkdir(parents=True, exist_ok=True)
+    (sector_dir / "agents").mkdir(exist_ok=True)
+    (sector_dir / "assets").mkdir(exist_ok=True)
+    sector_file.write_text(content, encoding="utf-8")
 
-    # Write the prompt
-    prompt_file = spec_dir / "prompt.md"
-    prompt_file.write_text(spec_prompt, encoding="utf-8")
-
-    # Seed an empty learned.md
-    learned_file = knowledge_dir / "learned.md"
-    learned_content = (
-        f"---\n"
-        f"type: knowledge\n"
-        f"revision: 0\n"
-        f"last_modified: {now.isoformat()}\n"
-        f"summary: \"Accumulated learnings for {base_agent}/{specialization}\"\n"
-        f"---\n"
-        f"# Learnings — {base_agent.title()} / {title}\n\n"
-    )
-    learned_file.write_text(learned_content, encoding="utf-8")
-
-    # Try to commit via versioning
     try:
-        stamp_and_commit(prompt_file,
-                         f"New agent: {base_agent}/{specialization}")
+        stamp_and_commit(sector_file, f"New sector: {sector_path}")
     except Exception:
-        pass  # Git may not be initialized
+        pass
 
-    logger.info("  ✓ Created agent specialization: %s/%s",
-                base_agent, specialization)
-    logger.info("    → %s", prompt_file)
-    logger.info("    → %s", learned_file)
+    inherits_msg = ""
+    if inherits_list:
+        inherits_msg = f"\n  🔗 Inherits: {', '.join(inherits_list)}"
 
+    logger.info("  ✓ Created sector: %s", sector_path)
     return (
-        f"✓ Created new agent specialization: {base_agent}/{specialization}\n"
-        f"  📄 Prompt: {prompt_file.relative_to(_AGENTS_ROOT.parent)}\n"
-        f"  📁 Knowledge: {knowledge_dir.relative_to(_AGENTS_ROOT.parent)}\n\n"
-        f"The agent is now available. You can:\n"
-        f"  - Use read_agent_knowledge('{base_agent}/{specialization}') to view it\n"
-        f"  - Use persist_learning() to add sector knowledge to it\n"
-        f"  - It will appear in future agent listings automatically"
+        f"✓ Created sector: {sector_path}\n"
+        f"  📂 Directory: knowledge/{sector_path}/\n"
+        f"  📄 Sector knowledge: knowledge/{sector_path}/sector.md\n"
+        f"  📂 Agents dir: knowledge/{sector_path}/agents/\n"
+        f"  📂 Assets dir: knowledge/{sector_path}/assets/"
+        f"{inherits_msg}\n\n"
+        f"Use create_sector_agent to add specialized agents to this sector."
     )
+
+
+def _exec_propose_prompt_change(target_prompt: str, change_type: str,
+                                proposed_content: str, reasoning: str,
+                                proposed_by: str = "system", **_kw) -> str:
+    """Save a prompt change proposal for admin review."""
+    logger.info("  🔧 Tool: propose_prompt_change(target=%s, type=%s, by=%s)",
+                target_prompt, change_type, proposed_by)
+
+    # Validate change_type
+    change_type = change_type.upper().strip()
+    if change_type not in ("ADD", "MODIFY", "REMOVE"):
+        return "(Error: change_type must be one of: ADD, MODIFY, REMOVE)"
+
+    # Validate target exists
+    target_file = _KNOWLEDGE_ROOT / target_prompt.lstrip("/")
+    if not target_file.exists():
+        return f"(Error: target prompt '{target_prompt}' does not exist.)"
+
+    # Build proposal filename
+    now = datetime.now(timezone.utc)
+    ts = now.strftime("%Y%m%d_%H%M%S")
+    # Extract role and sector from path for readable filename
+    parts = target_prompt.replace("/agents/", "/").replace("/prompt.md", "").strip("/")
+    safe_name = parts.replace("/", "_")
+    filename = f"{safe_name}_{change_type.lower()}_{ts}.md"
+
+    # Build proposal content
+    pending_dir = Path(__file__).parent.parent / "pending_updates"
+    pending_dir.mkdir(exist_ok=True)
+
+    proposal = (
+        f"---\n"
+        f"target_file: knowledge/{target_prompt.lstrip('/')}\n"
+        f"change_type: {change_type}\n"
+        f"proposed_by: {proposed_by}\n"
+        f"proposed_at: {now.isoformat()}\n"
+        f"status: pending\n"
+        f"---\n"
+        f"## Proposed Prompt Change: **{change_type}**\n\n"
+        f"{proposed_content}\n\n"
+        f"## Reasoning\n\n"
+        f"{reasoning}\n"
+    )
+
+    proposal_path = pending_dir / filename
+    proposal_path.write_text(proposal, encoding="utf-8")
+
+    logger.info("  ✓ Proposal saved: %s", filename)
+    return (
+        f"✓ Prompt change proposal saved for admin review.\n"
+        f"  📄 Proposal: pending_updates/{filename}\n"
+        f"  🎯 Target: knowledge/{target_prompt}\n"
+        f"  📝 Type: {change_type}\n"
+        f"  👤 Proposed by: {proposed_by}\n\n"
+        f"An admin will review this via: python -m marketsage.admin list"
+    )
+
+
+def _exec_create_custom_scraper(
+    name: str,
+    description: str,
+    base_url: str,
+    default_query: str = "",
+    default_days_back: int = 30,
+    default_max_articles: int = 20,
+    **_kw,
+) -> str:
+    """Create a reusable custom scraper config."""
+    import re
+    logger.info("  🔧 Tool: create_custom_scraper(%s)", name)
+
+    # Sanitize name
+    name = re.sub(r'[^a-z0-9_]', '_', name.strip().lower())
+    if not name.startswith("fetch_"):
+        name = f"fetch_{name}"
+
+    # Check for conflicts with built-in tools
+    builtin_names = {t["name"] for t in TOOL_DECLARATIONS}
+    if name in builtin_names:
+        return f"(Error: '{name}' conflicts with a built-in tool. Choose a different name.)"
+
+    # Check if custom scraper already exists
+    config_file = _CUSTOM_SCRAPERS_DIR / f"{name}.json"
+    if config_file.exists():
+        return (
+            f"(Custom scraper '{name}' already exists. "
+            f"It will be loaded automatically on the next run.)"
+        )
+
+    # Validate URL
+    if not base_url.startswith(("http://", "https://")):
+        return f"(Error: base_url must start with http:// or https://. Got: {base_url})"
+
+    # Create the config
+    now = datetime.now(timezone.utc).isoformat()
+    config = {
+        "name": name,
+        "description": description,
+        "base_url": base_url,
+        "default_query": default_query,
+        "default_days_back": default_days_back,
+        "default_max_articles": default_max_articles,
+        "created_at": now,
+        "created_by": "marketsage_auto",
+    }
+
+    _CUSTOM_SCRAPERS_DIR.mkdir(parents=True, exist_ok=True)
+    with open(config_file, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2, ensure_ascii=False)
+
+    # Dynamically register it so it's usable in THIS session
+    _register_custom_scraper(config)
+
+    logger.info("  ✓ Created custom scraper: %s → %s", name, base_url)
+    return (
+        f"✓ Created custom scraper: {name}\n"
+        f"  🌐 URL: {base_url}\n"
+        f"  📝 Description: {description}\n"
+        f"  🔍 Default query: {default_query or '(none)'}\n"
+        f"  📅 Default days back: {default_days_back}\n"
+        f"  📰 Default max articles: {default_max_articles}\n\n"
+        f"The tool '{name}' is now available in this session and all "
+        f"future runs. Call it like any other scraper tool."
+    )
+
+
+def _exec_propose_new_tool(
+    tool_name: str,
+    description: str,
+    data_source: str,
+    rationale: str,
+    parameters_needed: str = "",
+    **_kw,
+) -> str:
+    """Propose a new tool for human implementation."""
+    logger.info("  🔧 Tool: propose_new_tool(%s)", tool_name)
+
+    _PENDING_DIR.mkdir(parents=True, exist_ok=True)
+    now = datetime.now(timezone.utc)
+    ts = now.strftime("%Y%m%d_%H%M%S")
+    fname = f"{ts}_tool_proposal_{tool_name}.md"
+    proposal_file = _PENDING_DIR / fname
+
+    content = (
+        f"---\n"
+        f"type: tool_proposal\n"
+        f"tool_name: {tool_name}\n"
+        f"data_source: {data_source}\n"
+        f"proposed_at: {now.isoformat()}\n"
+        f"proposed_by: marketsage_auto\n"
+        f"status: pending\n"
+        f"---\n"
+        f"# Tool Proposal: {tool_name}\n\n"
+        f"## Description\n\n{description}\n\n"
+        f"## Data Source\n\n{data_source}\n\n"
+        f"## Parameters Needed\n\n{parameters_needed or '(not specified)'}\n\n"
+        f"## Rationale\n\n{rationale}\n\n"
+        f"## Implementation Notes\n\n"
+        f"This tool was proposed by MarketSage during an analysis session. "
+        f"It requires custom Python implementation because the generic "
+        f"web scraper is not sufficient.\n\n"
+        f"To implement:\n"
+        f"1. Create `marketsage/scrapers/{tool_name.replace('fetch_', '')}.py`\n"
+        f"2. Add the function to `marketsage/tools.py` (declaration + implementation)\n"
+        f"3. Register in TOOL_REGISTRY\n"
+    )
+    proposal_file.write_text(content, encoding="utf-8")
+
+    logger.info("  ✓ Tool proposal saved: %s", proposal_file)
+    return (
+        f"✓ Tool proposal saved for human review:\n"
+        f"  📄 {proposal_file.relative_to(Path(__file__).parent.parent)}\n\n"
+        f"A developer will review this proposal and implement the tool. "
+        f"In the meantime, try using fetch_web_news with the data source "
+        f"URL directly if possible."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Custom scraper loading — reads JSON configs from custom_scrapers/
+# ---------------------------------------------------------------------------
+
+def _register_custom_scraper(config: dict) -> None:
+    """Register a custom scraper config as a live tool (declaration + implementation)."""
+    name = config["name"]
+
+    # Skip if already registered
+    if name in TOOL_REGISTRY:
+        return
+
+    # Create a closure for execution
+    def _make_exec(cfg: dict):
+        def _exec(query: str = "", days_back: int = 0,
+                  max_articles: int = 0, **_kw) -> str:
+            effective_query = query or cfg.get("default_query", "")
+            effective_days = days_back or cfg.get("default_days_back", 30)
+            effective_max = max_articles or cfg.get("default_max_articles", 20)
+            logger.info("  🔧 Tool: %s(query=%s, days_back=%d)",
+                        cfg["name"], effective_query, effective_days)
+            return _exec_fetch_web_news(
+                url=cfg["base_url"],
+                query=effective_query,
+                days_back=effective_days,
+                max_articles=effective_max,
+            )
+        return _exec
+
+    TOOL_REGISTRY[name] = _make_exec(config)
+    logger.debug("  Registered custom scraper: %s", name)
+
+
+def _load_custom_scrapers() -> list[dict[str, Any]]:
+    """
+    Load all custom scraper configs from the custom_scrapers/ directory.
+
+    Returns a list of tool declarations for the custom scrapers,
+    and registers their implementations in TOOL_REGISTRY.
+    """
+    custom_declarations: list[dict[str, Any]] = []
+
+    if not _CUSTOM_SCRAPERS_DIR.is_dir():
+        return custom_declarations
+
+    for config_file in sorted(_CUSTOM_SCRAPERS_DIR.glob("*.json")):
+        try:
+            with open(config_file, encoding="utf-8") as f:
+                config = json.load(f)
+
+            name = config["name"]
+            description = config.get("description", f"Custom scraper: {name}")
+
+            # Build tool declaration
+            declaration = {
+                "name": name,
+                "description": description,
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": (
+                                f"Search query to filter articles. "
+                                f"Default: '{config.get('default_query', '')}'."
+                            ),
+                        },
+                        "days_back": {
+                            "type": "integer",
+                            "description": (
+                                f"How far back to look. "
+                                f"Default: {config.get('default_days_back', 30)}."
+                            ),
+                        },
+                        "max_articles": {
+                            "type": "integer",
+                            "description": (
+                                f"Maximum articles to fetch. "
+                                f"Default: {config.get('default_max_articles', 20)}."
+                            ),
+                        },
+                    },
+                },
+            }
+            custom_declarations.append(declaration)
+
+            # Register the implementation
+            _register_custom_scraper(config)
+
+            logger.debug("Loaded custom scraper: %s (%s)",
+                         name, config.get("base_url", "?"))
+
+        except Exception as exc:
+            logger.warning("Failed to load custom scraper %s: %s",
+                           config_file.name, exc)
+
+    return custom_declarations
+
+
+# ---------------------------------------------------------------------------
+# Generated tool loading — reads Python modules from generated_tools/
+# ---------------------------------------------------------------------------
+
+_GENERATED_TOOLS_DIR = Path(__file__).parent / "generated_tools"
+
+
+def _load_generated_tools() -> list[dict[str, Any]]:
+    """
+    Load all generated tool modules from the generated_tools/ directory.
+
+    Each generated tool has:
+    - A ``.json`` manifest with the tool declaration and metadata
+    - A ``.py`` module exposing a ``fetch(**kwargs) → list[dict]`` function
+
+    Returns a list of tool declarations and registers implementations
+    in TOOL_REGISTRY.
+    """
+    import importlib.util
+
+    generated_declarations: list[dict[str, Any]] = []
+
+    if not _GENERATED_TOOLS_DIR.is_dir():
+        return generated_declarations
+
+    for json_file in sorted(_GENERATED_TOOLS_DIR.glob("*.json")):
+        tool_name = json_file.stem
+        py_file = _GENERATED_TOOLS_DIR / f"{tool_name}.py"
+
+        # Skip if already registered (avoid double-loading)
+        if tool_name in TOOL_REGISTRY:
+            # Still need to return the declaration
+            try:
+                with open(json_file, encoding="utf-8") as f:
+                    manifest = json.load(f)
+                if manifest.get("metadata", {}).get("status") == "active":
+                    generated_declarations.append(manifest["declaration"])
+            except Exception:
+                pass
+            continue
+
+        if not py_file.exists():
+            logger.warning("Generated tool %s has .json but no .py — skipping",
+                           tool_name)
+            continue
+
+        try:
+            # Load manifest
+            with open(json_file, encoding="utf-8") as f:
+                manifest = json.load(f)
+
+            # Skip inactive tools
+            if manifest.get("metadata", {}).get("status") != "active":
+                logger.debug("Skipping inactive generated tool: %s", tool_name)
+                continue
+
+            declaration = manifest["declaration"]
+
+            # Import the Python module
+            module_name = f"marketsage.generated_tools.{tool_name}"
+            spec = importlib.util.spec_from_file_location(module_name, py_file)
+            if spec is None or spec.loader is None:
+                logger.warning("Could not create spec for %s", py_file)
+                continue
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+
+            if not hasattr(mod, "fetch") or not callable(mod.fetch):
+                logger.warning("Generated tool %s has no callable fetch() — skipping",
+                               tool_name)
+                continue
+
+            # Create a wrapper that calls fetch() and formats the result
+            def _make_generated_exec(module, name):
+                def _exec(**kwargs) -> str:
+                    logger.info("  🔧 Tool: %s(%s)", name, kwargs)
+                    try:
+                        records = module.fetch(**kwargs)
+                    except Exception as exc:
+                        logger.error("  ✗ Generated tool %s failed: %s",
+                                     name, exc, exc_info=True)
+                        return f"(Error: generated tool {name} failed: {exc})"
+                    if not records:
+                        return f"(⚠ No data returned from {name}.)"
+                    # Format records
+                    from marketsage.data_service import (
+                        format_articles_for_llm,
+                        format_generic_for_llm,
+                    )
+                    # Try article format first (if records have 'body' key)
+                    if records and isinstance(records[0], dict):
+                        if "body" in records[0]:
+                            text = format_articles_for_llm(records)
+                        else:
+                            text = format_generic_for_llm(records,
+                                                         source_name=name)
+                    else:
+                        text = format_generic_for_llm(records,
+                                                     source_name=name)
+                    logger.info("  ✓ %s returned %d records, %d chars",
+                                name, len(records), len(text))
+                    return text
+                return _exec
+
+            TOOL_REGISTRY[tool_name] = _make_generated_exec(mod, tool_name)
+            generated_declarations.append(declaration)
+            logger.debug("Loaded generated tool: %s (%s)",
+                         tool_name, py_file.name)
+
+        except Exception as exc:
+            logger.warning("Failed to load generated tool %s: %s",
+                           json_file.name, exc)
+
+    return generated_declarations
+
+
+# ---------------------------------------------------------------------------
+# Public API — all declarations (built-in + custom + generated)
+# ---------------------------------------------------------------------------
+
+def get_all_tool_declarations() -> list[dict[str, Any]]:
+    """
+    Return the complete list of tool declarations:
+    built-in + custom scrapers + generated tools.
+
+    Custom scrapers are loaded from JSON configs in custom_scrapers/.
+    Generated tools are loaded from Python modules in generated_tools/.
+    Call this instead of using TOOL_DECLARATIONS directly.
+    """
+    custom = _load_custom_scrapers()
+    generated = _load_generated_tools()
+    return TOOL_DECLARATIONS + custom + generated
 
 
 # ---------------------------------------------------------------------------
@@ -672,12 +1288,17 @@ TOOL_REGISTRY: dict[str, callable] = {
     "fetch_fred": _exec_fetch_fred,
     "fetch_nfg_news": _exec_fetch_nfg_news,
     "fetch_web_news": _exec_fetch_web_news,
-    "read_vault_file": _exec_read_vault_file,
-    "list_vault_contents": _exec_list_vault_contents,
+    "read_knowledge": _exec_read_knowledge,
+    "list_knowledge": _exec_list_knowledge,
     "persist_learning": _exec_persist_learning,
     "list_available_scrapers": _exec_list_available_scrapers,
-    "read_agent_knowledge": _exec_read_agent_knowledge,
-    "create_agent_specialization": _exec_create_agent_specialization,
+    "load_agent": _exec_load_agent,
+    "create_sector_agent": _exec_create_sector_agent,
+    "create_sector": _exec_create_sector,
+    "propose_prompt_change": _exec_propose_prompt_change,
+    "create_custom_scraper": _exec_create_custom_scraper,
+    "propose_new_tool": _exec_propose_new_tool,
+    "read_sector_context": _exec_read_sector_context,
 }
 
 

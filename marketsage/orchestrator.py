@@ -49,6 +49,7 @@ def _build_tool_catalog() -> str:
     for t in tools:
         name = t["name"]
         desc = t.get("description", "")
+        note = t.get("usage_note", "")
         params = t.get("parameters", {}).get("properties", {})
         if params:
             param_parts = []
@@ -58,7 +59,10 @@ def _build_tool_catalog() -> str:
             sig = ", ".join(param_parts)
         else:
             sig = ""
-        lines.append(f"- **`{name}({sig})`** — {desc}")
+        entry = f"- **`{name}({sig})`** — {desc}"
+        if note:
+            entry += f" ⚠ {note}"
+        lines.append(entry)
     return "\n".join(lines)
 
 
@@ -194,13 +198,6 @@ so a mining accountant gets BOTH equity analysis AND commodity domain knowledge.
 Some assets belong to multiple sectors (e.g., Barrick mines gold AND copper).
 These have `sectors:` in their frontmatter. When analyzing them, load context
 from ALL listed sectors.
-
-## API Efficiency Guidelines
-
-- **FRED**: Batch related series into a single call
-- **Yahoo Finance**: One call per ticker — do not duplicate
-- **Web news**: Vary search queries rather than repeating
-- **General**: Minimize redundant tool calls
 
 ## Self-Expansion
 
