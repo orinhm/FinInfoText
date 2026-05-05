@@ -244,8 +244,23 @@ When persisting learnings, use the correct target path:
 3. **Ticker aliasing guard** — verify Yahoo Finance data matches the intended asset.
 4. **Multi-perspective analysis** — always use 2-3 agent perspectives.
 5. **Structured output** — clear sections, bullet points, confidence levels.
-6. **Persist genuinely new knowledge** — save it for future analyses.
-7. **Data-missing protocol** — flag unavailable data clearly.
+6. **Data-missing protocol** — flag unavailable data clearly.
+
+## Learning Persistence
+
+After every analysis, persist genuinely new knowledge for future use.
+Call `persist_learning` for each distinct insight — do NOT batch them into one call.
+
+When the user explicitly asks to "learn" or "extract knowledge," be **aggressive**:
+persist every useful pattern, benchmark, heuristic, or factual insight you find.
+Categorize learnings by type and persist to the right path:
+
+- **Industry patterns** → `{{sector}}/sector.md` (e.g., Lassonde Curve stages, permitting timelines)
+- **Financial benchmarks** → `{{sector}}/agents/accountant/knowledge.md` (e.g., EV/oz norms, AISC ranges)
+- **M&A patterns** → `{{sector}}/agents/executive/knowledge.md` (e.g., takeover premiums, deal structures)
+- **Sentiment patterns** → `{{sector}}/agents/trader/knowledge.md` (e.g., board behavior at cycle bottoms)
+- **Asset-specific facts** → `{{sector}}/assets/{{ticker}}.md` (e.g., key zones, management changes)
+- **Cross-sector insights** → `agents/{{role}}/knowledge.md` or root `sector.md`
 
 {output_format}
 """
@@ -447,8 +462,20 @@ def main() -> None:
     else:
 
         #request = "Analyze The Silver Market over the past six months, analyze the silver price movement, highlight leading stocks, do historical analysis of silver and how the price movement looks in historical perspective"
-        request = "give me an overview of NFGC public sentiment (look at CEO.CA) and how it evolved over the past 3 years. give a time line of major events, along side stock price along with public sentiment. and summary of the different sentiments at that time"
-
+        request = """give me a detailed overview of NFGC public sentiment (look at CEO.CA, download the data and analyze it) and how it evolved over the past 6 years. 
+                    I want a detailed summarry of every month including price movement, news releases and ceo.ca sentiment alongside with major concerns and issues raised in the message board
+                    give a time line of major events, 
+                    along side stock price along with public sentiment. and summary of the different sentiments at that time
+                    """
+        request = """give me a detailed overview of NFGC public sentiment (look at CEO.CA, download the data and analyze it) and how it evolved over the past 6 years. 
+                I want a detailed summary of every month including price movement, news releases and ceo.ca sentiment alongside with major concerns and issues raised in the message board.
+                give also for each month a summary of major disagreements amongst the message board participants
+                            """
+        request = """
+                    look at gold mining stock message boards in ceo.ca (NFGC, Kinross, Alamos... whatever other stocks) over the last 5 years.
+                    try to learn everything you can about the mining business, pitfalls processes in mining and finance and whatever category 
+                    you can learn
+                    """
     orchestrator = Orchestrator(run_dir=run_dir)
     result = orchestrator.run(request)
 

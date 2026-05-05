@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 import time
 from datetime import datetime, timedelta
 from typing import Any
@@ -25,6 +26,11 @@ RATE_LIMIT_DELAY = 0.5
 MAX_RETRIES = 3
 RETRY_BACKOFF = 2.0
 
+# Global lock — serializes API calls across all threads so parallel
+# channel scrapes don't collectively exceed the CEO.CA rate limit.
+_API_LOCK = threading.Lock()
+_last_request_time = 0.0
+
 
 # ---------------------------------------------------------------------------
 # API helpers
@@ -34,13 +40,11 @@ def _fetch_spiels_batch(channel: str, until: int | None = None) -> dict:
     """
     Single API call to fetch a batch of spiels.
 
-    Parameters
-    ----------
-    channel : str
-        Channel slug (e.g. "nfg").
-    until : int, optional
-        Timestamp (ms) for pagination — fetch spiels older than this.
+    Uses a global lock + delay to enforce rate limiting even when
+    multiple channels are scraped in parallel threads.
     """
+    global _last_request_time
+
     params: dict[str, str] = {"channel": channel}
     if until is not None:
         params["load_more"] = "top"
@@ -50,7 +54,14 @@ def _fetch_spiels_batch(channel: str, until: int | None = None) -> dict:
 
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            resp = requests.get(url, params=params, timeout=30)
+            # Serialize all API calls globally
+            with _API_LOCK:
+                elapsed = time.time() - _last_request_time
+                if elapsed < RATE_LIMIT_DELAY:
+                    time.sleep(RATE_LIMIT_DELAY - elapsed)
+                resp = requests.get(url, params=params, timeout=30)
+                _last_request_time = time.time()
+
             resp.raise_for_status()
             return resp.json()
         except (requests.RequestException, json.JSONDecodeError) as exc:
@@ -111,7 +122,6 @@ def _scrape_channel(channel: str, days_back: int,
             break
 
         until = oldest_ts
-        time.sleep(RATE_LIMIT_DELAY)
 
     result = [s for s in all_spiels.values() if s["timestamp"] >= cutoff_ts]
     result.sort(key=lambda s: s["timestamp"])
