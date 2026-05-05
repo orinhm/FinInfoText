@@ -74,14 +74,11 @@ def _generate_output_format(llm: LLMClient, user_request: str) -> str:
     system = (
         "You are designing the output format for an investment analysis system. "
         "Given the user's request, generate the optimal report structure.\n\n"
-        "Rules:\n"
-        "- Return ONLY a markdown section starting with '## Output Format'\n"
-        "- Include 4-8 section headings with a one-line description each\n"
-        "- Be specific to the request type — don't use a generic template\n"
-        "- If comparing assets, include comparison tables\n"
-        "- If analyzing a single asset, include multi-perspective sections\n"
-        "- Always end with an 'Overall Assessment' with a confidence level\n"
-        "- Keep it under 200 words total\n"
+        "Return ONLY a markdown section starting with '## Output Format' "
+        "containing section headings with brief descriptions.\n\n"
+        "Adapt the depth and number of sections to the request — a quick "
+        "overview needs few sections, a detailed deep-dive needs many. "
+        "Be specific to the request type — don't use a generic template.\n"
     )
     return llm.simple_call(
         system, user_request,
