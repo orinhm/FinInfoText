@@ -22,13 +22,12 @@ from typing import Any
 
 import yaml
 
-from marketsage.agent import AGENTS_ROOT, discover_agents
+from marketsage.agent import KNOWLEDGE_ROOT, discover_all_sectors
 from marketsage.llm_client import LLMClient
 
 logger = logging.getLogger("marketsage.orchestrator")
 
 _SETTINGS_PATH = Path(__file__).parent / "settings.yaml"
-_VAULT_ROOT = Path(__file__).parent.parent / "vault"
 
 
 def _load_settings() -> dict[str, Any]:
@@ -36,161 +35,228 @@ def _load_settings() -> dict[str, Any]:
         return yaml.safe_load(f)
 
 
-def _build_system_prompt() -> str:
+def _build_tool_catalog() -> str:
+    """
+    Auto-generate the tool catalog from the live tool registry.
+
+    Includes built-in tools, custom scrapers, and generated tools —
+    so newly created tools appear automatically in the next run.
+    """
+    from marketsage.tools import get_all_tool_declarations
+
+    tools = get_all_tool_declarations()
+    lines = ["## Your Available Tools\n"]
+    for t in tools:
+        name = t["name"]
+        desc = t.get("description", "")
+        params = t.get("parameters", {}).get("properties", {})
+        if params:
+            param_parts = []
+            for pname, pinfo in params.items():
+                ptype = pinfo.get("type", "")
+                param_parts.append(f"{pname}: {ptype}" if ptype else pname)
+            sig = ", ".join(param_parts)
+        else:
+            sig = ""
+        lines.append(f"- **`{name}({sig})`** — {desc}")
+    return "\n".join(lines)
+
+
+def _generate_output_format(llm: LLMClient, user_request: str) -> str:
+    """
+    Use a lightweight LLM call to generate an output format
+    tailored to the user's specific request.
+
+    Different requests need different structures — a comparison
+    needs tables, a single-stock analysis needs multi-perspective
+    sections, a macro question needs supply/demand frameworks, etc.
+    """
+    system = (
+        "You are designing the output format for an investment analysis system. "
+        "Given the user's request, generate the optimal report structure.\n\n"
+        "Rules:\n"
+        "- Return ONLY a markdown section starting with '## Output Format'\n"
+        "- Include 4-8 section headings with a one-line description each\n"
+        "- Be specific to the request type — don't use a generic template\n"
+        "- If comparing assets, include comparison tables\n"
+        "- If analyzing a single asset, include multi-perspective sections\n"
+        "- Always end with an 'Overall Assessment' with a confidence level\n"
+        "- Keep it under 200 words total\n"
+    )
+    return llm.simple_call(
+        system, user_request,
+        label="output-format", agent_name="orchestrator",
+    )
+
+
+def _build_system_prompt(llm: LLMClient, user_request: str) -> str:
     """
     Build the system prompt that gives the LLM its identity,
-    available tools context, agent personas overview, and
-    vault architecture understanding.
+    available tools context, and knowledge tree overview.
+
+    Dynamic sections:
+    - Tool catalog: auto-generated from the live tool registry
+    - Output format: LLM-tailored per user request
     """
-    # Discover available agents
-    agents = discover_agents()
-    agent_list = "\n".join(f"  - `{k}`" for k in sorted(agents.keys()))
+    # Discover available sectors and their agents
+    all_sectors = discover_all_sectors()
+    sector_list = "\n".join(
+        f"  - `{sp}`: {', '.join(roles)}"
+        for sp, roles in sorted(all_sectors.items())
+    )
 
-    # Read vault index for structure overview
-    vault_index = ""
-    index_file = _VAULT_ROOT / "_index.json"
-    if index_file.exists():
-        try:
-            vault_index = index_file.read_text(encoding="utf-8")
-        except Exception:
-            vault_index = "(could not read vault index)"
+    # Load base role summaries from knowledge/agents/
+    base_roles: list[str] = []
+    base_dir = KNOWLEDGE_ROOT / "agents"
+    if base_dir.is_dir():
+        for role_dir in sorted(base_dir.iterdir()):
+            if not role_dir.is_dir():
+                continue
+            prompt_file = role_dir / "prompt.md"
+            if prompt_file.exists():
+                content = prompt_file.read_text(encoding="utf-8")
+                if content.startswith("---"):
+                    end = content.find("---", 3)
+                    if end > 0:
+                        content = content[end + 3:].strip()
+                lines = content.split("\n\n")
+                summary = lines[0].strip() if lines else ""
+                if summary:
+                    base_roles.append(f"### {role_dir.name}\n{summary}")
 
-    # Load agent prompt summaries for persona context
-    agent_summaries: list[str] = []
-    for agent_path in sorted(agents.keys()):
-        prompt_file = agents[agent_path] / "prompt.md"
-        if prompt_file.exists():
-            # Read first ~500 chars to get the gist
-            content = prompt_file.read_text(encoding="utf-8")
-            # Strip frontmatter
-            if content.startswith("---"):
-                end = content.find("---", 3)
-                if end > 0:
-                    content = content[end + 3:].strip()
-            # Take first paragraph
-            lines = content.split("\n\n")
-            summary = lines[0].strip() if lines else ""
-            if summary:
-                agent_summaries.append(f"### {agent_path}\n{summary}")
+    roles_text = "\n\n".join(base_roles) if base_roles else "(no base roles found)"
 
-    agent_personas = "\n\n".join(agent_summaries) if agent_summaries else "(no agents found)"
+    # Dynamic sections
+    tool_catalog = _build_tool_catalog()
+    output_format = _generate_output_format(llm, user_request)
 
     system_prompt = f"""\
 # MarketSage — Self-Evolving Investment Intelligence System
 
 You are **MarketSage**, a sophisticated multi-agent investment analysis system.
-You have access to several data-fetching tools (scrapers) and a knowledge vault
+You have access to data-fetching tools (scrapers) and a unified knowledge tree
 that accumulates intelligence over time.
+
+## Architecture: Sector-First Knowledge Tree with Inheritance
+
+All knowledge — sector data, asset intelligence, AND agent specializations —
+lives in a single `knowledge/` tree organized by sector. See ARCHITECTURE.md
+for the full specification.
+
+```
+knowledge/
+├── ARCHITECTURE.md          — System specification (read this for full details)
+├── sector.md                — Universal market knowledge
+├── agents/                  — Generic role frameworks (HOW to think)
+│   ├── accountant/          — Financial analysis framework
+│   ├── executive/           — Strategy & M&A framework
+│   ├── trader/              — Sentiment & positioning framework
+│   ├── auditor/             — Data verification framework
+│   └── geopolitical/        — Geopolitical risk framework
+│
+├── commodities/
+│   ├── sector.md            — Commodity macro intelligence
+│   ├── precious_metals/gold/
+│   │   ├── sector.md        — Gold sector intelligence
+│   │   ├── agents/          — Gold-specialized agents
+│   │   ├── juniors/assets/  — Junior gold miner data
+│   │   └── majors/assets/   — Major gold miner data
+│   └── base_metals/copper/  — Copper sector + agents
+│
+├── equities/
+│   ├── sector.md            — Equities macro intelligence
+│   ├── tech/                — Tech sector + agents + assets
+│   ├── mining/              — Mining equities (inherits: precious_metals)
+│   │   ├── sector.md        — Mining sector + inheritance declaration
+│   │   └── assets/          — Mining company data (e.g., barrick.md)
+│   └── pharma/              — Pharma sector + agents
+```
+
+### Cross-Sector Inheritance
+
+Sectors can inherit from other sectors via `inherits:` in sector.md frontmatter.
+For example, `equities/mining` inherits from `commodities/precious_metals`,
+so a mining accountant gets BOTH equity analysis AND commodity domain knowledge.
 
 ## How You Work
 
-1. **Understand** the user's request — what asset, sector, time period, and
-   type of analysis they want.
-2. **Gather data** by calling the appropriate scraper tools. You decide which
-   tools to call based on the request. You can call multiple tools.
-3. **Consult the vault** by reading existing knowledge files to see what has
-   been accumulated from prior analyses.
-4. **Analyze** the data from multiple specialist perspectives (trader,
-   executive, auditor, accountant, librarian). Read agent knowledge files
-   to adopt their analytical frameworks.
-5. **Synthesize** all perspectives into a coherent, well-structured report.
-6. **Persist learnings** — if you discover important new facts or patterns,
-   use the persist_learning tool to save them for future analyses.
+1. **Load sector context**: Call `read_sector_context(sector)` FIRST to get
+   ALL knowledge + available agents for that sector in one call.
+2. **Load agents**: Call `load_agent(role, sector_path)` for each specialist
+   perspective needed. This composes agents/role + sector specialization +
+   inherited sector knowledge automatically.
+3. **Fetch fresh data** from external sources (Yahoo, CEO.CA, FRED, web_news).
+4. **Analyze** from multiple specialist perspectives.
+5. **Synthesize** all perspectives into a coherent report.
+6. **Persist learnings** to the correct location in the knowledge tree.
 
-## Your Available Tools
+{tool_catalog}
 
-You have tools for:
-- **Data fetching**: CEO.CA forum posts, Yahoo Finance stock data, FRED
-  macroeconomic data, NewFoundGold press releases, generic web news scraping
-- **Knowledge vault**: Read and browse the hierarchical knowledge vault,
-  persist new learnings
-- **Agent knowledge**: Read specialist agent prompts and accumulated expertise
-- **Agent creation**: Create new specialist sub-agents when a sector has
-  no existing specialization (e.g., create `executive/tech` when analyzing
-  tech companies for the first time)
+## Multi-Sector Assets
 
-## Agent Specialization
+Some assets belong to multiple sectors (e.g., Barrick mines gold AND copper).
+These have `sectors:` in their frontmatter. When analyzing them, load context
+from ALL listed sectors.
 
-The agent system is hierarchical — e.g., `executive/gold` inherits from
-`executive` but adds gold-sector expertise. If you encounter a sector with
-no existing specialization, use `create_agent_specialization` to create one.
-**Only do this when sector-specific frameworks would genuinely improve the
-analysis** — don't create specializations for one-off queries.
+## API Efficiency Guidelines
 
-## Agent Personas Available
+- **FRED**: Batch related series into a single call
+- **Yahoo Finance**: One call per ticker — do not duplicate
+- **Web news**: Vary search queries rather than repeating
+- **General**: Minimize redundant tool calls
 
-When analyzing data, adopt the perspective of these specialist agents:
+## Self-Expansion
 
-{agent_personas}
+### New Sectors
+Use `create_sector` to create new domains (e.g., `equities/biotech`).
+This creates the directory with `sector.md`, `agents/`, and `assets/`.
+Supports cross-sector inheritance via the `inherits` parameter.
 
-**How to use agents**: Call `read_agent_knowledge` for any agent whose
-perspective is relevant to the analysis. Then apply their analytical framework
-to the gathered data.
+### Agent Specialization
+If a sector has no existing agent for a needed role, use `create_sector_agent`
+to create one. The agent is created under {{sector}}/agents/{{role}}/ and
+inherits the base role framework. Only create when genuinely needed.
 
-## Available Agents (by path)
+### Prompt Evolution
+When you identify improvements to an agent's analytical framework, use
+`propose_prompt_change` to submit the proposal for admin review.
+**NEVER write directly to prompt.md files** — persist_learning will reject it.
+Proposals are reviewed via `python -m marketsage.admin`.
 
-{agent_list}
+### Custom Scrapers
+Use `create_custom_scraper` to save useful news sources as named tools.
 
-## Knowledge Vault Structure
+## Base Agent Roles
 
-The vault is a hierarchical directory of markdown files containing accumulated
-intelligence from prior analyses. Structure:
+{roles_text}
 
-```
-vault/
-├── _index.json          — Master index of sectors, assets, tickers
-├── commodities/         — Commodity sector knowledge
-│   └── precious_metals/
-│       └── gold/
-│           ├── gold_sector.md
-│           └── assets/
-│               └── nfgc.md
-├── equities/            — Equity-specific knowledge
-└── mining/              — Mining industry knowledge
-```
+## Sectors with Specialized Agents
 
-Each vault `.md` file has these sections:
-- **Executive Summary** — auto-generated from latest heuristics
-- **Key Heuristics** — distilled facts and patterns (deduplicated)
-- **Chronological Log** — timestamped record of observations
-- **Contradictions & Resolutions** — tracked disagreements
+{sector_list}
 
-**Vault Index:**
-```json
-{vault_index}
-```
+## Learning Persistence Paths
+
+When persisting learnings, use the correct target path:
+- **Asset**: `{{sector}}/assets/{{ticker}}.md`
+- **Sector**: `{{sector}}/sector.md`
+- **Agent (sector)**: `{{sector}}/agents/{{role}}/knowledge.md`
+- **Agent (cross-sector)**: `agents/{{role}}/knowledge.md`
+- **Universal**: `sector.md` (root)
 
 ## Analysis Guidelines
 
 1. **Never hallucinate data** — if a scraper returns no data, say so clearly.
-   Do NOT fabricate numbers, quotes, or events.
-2. **Be sector-agnostic** — work with any asset type (mining, tech, energy, etc.)
-3. **Ticker aliasing guard** — verify that Yahoo Finance data matches the
-   company the user asked about. E.g., ticker GOLD is Barrick Gold, not
-   "gold the commodity".
-4. **Multi-perspective analysis** — always consider at least 2-3 agent
-   perspectives (e.g., trader + executive + accountant).
-5. **Structured output** — use clear sections, bullet points, and confidence
-   levels in your final analysis.
-6. **Persist genuinely new knowledge** — if you learn something that would
-   help future analyses, save it using the persist_learning tool.
-7. **Data-missing protocol** — if critical data is unavailable, clearly
-   flag it rather than working around it silently.
+2. **Be sector-agnostic** — work with any asset type.
+3. **Ticker aliasing guard** — verify Yahoo Finance data matches the intended asset.
+4. **Multi-perspective analysis** — always use 2-3 agent perspectives.
+5. **Structured output** — clear sections, bullet points, confidence levels.
+6. **Persist genuinely new knowledge** — save it for future analyses.
+7. **Data-missing protocol** — flag unavailable data clearly.
 
-## Output Format
-
-Your final analysis should include:
-- **Executive Summary** — 2-3 sentence overview
-- **Data Sources Used** — what tools you called and what data you got
-- **Multi-Perspective Analysis** — organized by perspective
-  (trader view, executive view, etc.)
-- **Key Findings** — most important takeaways
-- **Risk Factors** — things to watch out for
-- **Overall Assessment** — with confidence level (LOW/MEDIUM/HIGH)
+{output_format}
 """
 
     return system_prompt
-
 
 # ---------------------------------------------------------------------------
 # Orchestrator
@@ -240,8 +306,8 @@ class Orchestrator:
         logger.info("  Run directory:     %s", self.run_dir or "(none)")
         logger.info("")
 
-        # Build system prompt
-        system_prompt = _build_system_prompt()
+        # Build system prompt (with dynamic tool catalog + LLM-tailored output format)
+        system_prompt = _build_system_prompt(self.llm, user_request)
         logger.info("System prompt: %d chars", len(system_prompt))
 
         # Save system prompt to run dir
@@ -264,10 +330,92 @@ class Orchestrator:
         elapsed = _time.time() - t_start
         logger.info("")
         logger.info("╔" + "═" * 68 + "╗")
-        logger.info("║  Run complete — %.1fs, %d LLM calls, %d tool calls" + " " * 15 + "║",
+        logger.info("║  Analysis complete — %.1fs, %d LLM calls, %d tool calls" + " " * 12 + "║",
                      elapsed, self.llm._call_count, self.llm._tool_call_count)
         logger.info("╚" + "═" * 68 + "╝")
         logger.info("")
+
+        # ── Save run summary JSON (early — before tool builder) ─────────
+        total_elapsed = _time.time() - t_start
+        summary: dict[str, Any] = {}
+        if self.run_dir:
+            summary = {
+                "timestamp": datetime.now().isoformat(),
+                "user_request": user_request[:500],
+                "elapsed_seconds": round(total_elapsed, 1),
+                "llm_calls": self.llm._call_count,
+                "tool_calls": self.llm._tool_call_count,
+                "tokens": {
+                    "input": self.llm._total_input_tokens,
+                    "output": self.llm._total_output_tokens,
+                    "total": self.llm._total_tokens,
+                },
+                "model": f"{self.llm.provider}/{self.llm.model}",
+                "tools_built": [],
+                "response_length": len(result),
+            }
+            summary_file = self.run_dir / "run_summary.json"
+            with open(summary_file, "w", encoding="utf-8") as f:
+                json.dump(summary, f, indent=2, ensure_ascii=False)
+
+        # ── Post-run: build any proposed tools ────────────────────────
+        tools_built = []
+        try:
+            from marketsage.tool_builder import build_all_pending
+            built = build_all_pending(self.llm, run_dir=self.run_dir)
+            if built:
+                built_ok = [r for r in built if r.get("status") == "built"]
+                tools_built = built_ok
+                logger.info("")
+                logger.info("🔧 Tool Builder: %d new tool(s) generated",
+                            len(built_ok))
+                for r in built_ok:
+                    logger.info("   ✓ %s", r["tool_name"])
+        except Exception as exc:
+            logger.warning("Tool builder phase failed: %s", exc,
+                           exc_info=True)
+
+        # ── Post-run: apply pending prompt proposals ─────────────────
+        prompts_applied = []
+        try:
+            from marketsage.admin import apply_all as admin_apply_all
+            results = admin_apply_all()
+            # Filter out the "no pending" and "skipping tool" messages
+            prompts_applied = [
+                r for r in results
+                if r.startswith("✓") or r.startswith("❌")
+            ]
+            if prompts_applied:
+                logger.info("")
+                logger.info("📝 Prompt Evolution: %d proposal(s) processed",
+                            len(prompts_applied))
+                for r in prompts_applied:
+                    logger.info("   %s", r.split("\n")[0])
+        except Exception as exc:
+            logger.warning("Prompt evolution phase failed: %s", exc,
+                           exc_info=True)
+
+        # ── Update run summary with tool builder + prompt results ──────
+        if self.run_dir and summary:
+            total_elapsed = _time.time() - t_start
+            summary["elapsed_seconds"] = round(total_elapsed, 1)
+            summary["tools_built"] = [
+                r.get("tool_name", "") for r in tools_built
+            ]
+            summary["prompts_evolved"] = len(prompts_applied)
+            summary["llm_calls"] = self.llm._call_count
+            summary["tokens"] = {
+                "input": self.llm._total_input_tokens,
+                "output": self.llm._total_output_tokens,
+                "total": self.llm._total_tokens,
+            }
+            with open(summary_file, "w", encoding="utf-8") as f:
+                json.dump(summary, f, indent=2, ensure_ascii=False)
+            logger.info("📊 Run summary → %s", summary_file.name)
+            logger.info("   Tokens: %d in / %d out / %d total",
+                        self.llm._total_input_tokens,
+                        self.llm._total_output_tokens,
+                        self.llm._total_tokens)
 
         return result
 
@@ -303,7 +451,9 @@ def main() -> None:
     if len(sys.argv) > 1:
         request = " ".join(sys.argv[1:])
     else:
-        request = "Summarize NFGC over the last 2 months"
+
+        #request = "Analyze The Silver Market over the past six months, analyze the silver price movement, highlight leading stocks, do historical analysis of silver and how the price movement looks in historical perspective"
+        request = "give me an overview of NFGC public sentiment (look at CEO.CA) and how it evolved over the past 3 years. give a time line of major events, along side stock price along with public sentiment. and summary of the different sentiments at that time"
 
     orchestrator = Orchestrator(run_dir=run_dir)
     result = orchestrator.run(request)
