@@ -85,6 +85,9 @@ class LLMClient:
     BASE_DELAY = 2.0     # seconds
     MAX_DELAY = 120.0    # seconds
 
+    # Keys allowed by the Gemini FunctionDeclaration schema
+    _SCHEMA_KEYS = {"name", "description", "parameters"}
+
     def _make_config(self, system_prompt: str,
                      include_tools: bool = True) -> Any:
         """Build a GenerateContentConfig with system instruction and tools."""
@@ -95,8 +98,14 @@ class LLMClient:
             "max_output_tokens": self.max_tokens,
         }
         if include_tools:
+            # Strip non-schema keys (e.g. usage_note) that the SDK rejects
+            raw_decls = get_all_tool_declarations()
+            clean_decls = [
+                {k: v for k, v in d.items() if k in self._SCHEMA_KEYS}
+                for d in raw_decls
+            ]
             kwargs["tools"] = [
-                types.Tool(function_declarations=get_all_tool_declarations())
+                types.Tool(function_declarations=clean_decls)
             ]
         return types.GenerateContentConfig(**kwargs)
 
