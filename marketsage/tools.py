@@ -592,19 +592,30 @@ def _exec_persist_learning(text: str, target_path: str = "",
     write_with_frontmatter(target, fm, body)
     stamp_and_commit(target, f"Learning: {text[:60]}")
 
-    # ── Centralized learning log ──────────────────────────────────
-    log_file = _KNOWLEDGE_ROOT / "_learning_log.jsonl"
+    # ── Learning logs ─────────────────────────────────────────────
+    run_dir = os.environ.get("MARKETSAGE_RUN_DIR", "")
     log_entry = {
         "timestamp": now,
         "target": target_path,
         "text": text,
-        "run": os.environ.get("MARKETSAGE_RUN_DIR", ""),
+        "run": run_dir,
     }
+    entry_line = json.dumps(log_entry, ensure_ascii=False) + "\n"
+
+    # Global log
     try:
-        with open(log_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+        with open(_KNOWLEDGE_ROOT / "_learning_log.jsonl", "a", encoding="utf-8") as f:
+            f.write(entry_line)
     except OSError:
-        pass  # non-critical — don't fail the tool
+        pass
+
+    # Per-run log
+    if run_dir:
+        try:
+            with open(Path(run_dir) / "learnings.jsonl", "a", encoding="utf-8") as f:
+                f.write(entry_line)
+        except OSError:
+            pass
 
     logger.info("  \u2713 persist_learning \u2192 %s", target)
     return f"\u2713 Learning persisted to knowledge/{target_path}"
