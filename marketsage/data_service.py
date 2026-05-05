@@ -25,10 +25,18 @@ FAILURES_FILE = _DATA_DIR / "scrape_failures.json"
 
 
 def _load_failures() -> list[dict]:
-    """Load existing failure log."""
+    """Load existing failure log. Resilient to corrupted files."""
     if FAILURES_FILE.exists():
-        with open(FAILURES_FILE, encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(FAILURES_FILE, encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                return data
+        except (json.JSONDecodeError, ValueError) as exc:
+            logger.warning("  ⚠ scrape_failures.json is corrupted (%s), resetting", exc)
+            # Reset the corrupted file
+            with open(FAILURES_FILE, "w", encoding="utf-8") as f:
+                json.dump([], f)
     return []
 
 

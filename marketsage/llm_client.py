@@ -11,12 +11,13 @@ import json
 import logging
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from marketsage.tools import TOOL_DECLARATIONS, execute_tool
+from marketsage.tools import get_all_tool_declarations, execute_tool
 
 logger = logging.getLogger("marketsage.llm")
 
@@ -24,6 +25,14 @@ _SETTINGS_PATH = Path(__file__).parent / "settings.yaml"
 
 # Maximum number of tool-call round-trips before forcing a text response
 MAX_TOOL_ITERATIONS = 25
+
+# Tool result size threshold (chars). Above this, data is chunk-summarized
+# before being fed back to the model. ~200K chars ≈ ~50K tokens.
+MAX_TOOL_RESULT_CHARS = 200_000
+
+# Chunk size for batch summarization (~50K chars ≈ ~12.5K tokens per chunk,
+# leaving ample room for system prompt + response in a summarization call)
+CHUNK_SIZE_CHARS = 50_000
 
 
 def _load_settings() -> dict[str, Any]:
@@ -47,6 +56,11 @@ class LLMClient:
         self.max_tokens: int = cfg.get("max_tokens", 8000)
         self._call_count: int = 0
         self._tool_call_count: int = 0
+
+        # Token usage tracking
+        self._total_input_tokens: int = 0
+        self._total_output_tokens: int = 0
+        self._total_tokens: int = 0
 
         # API key
         self.api_key: str = cfg.get("api_key", "") or ""
@@ -82,7 +96,7 @@ class LLMClient:
         }
         if include_tools:
             kwargs["tools"] = [
-                types.Tool(function_declarations=TOOL_DECLARATIONS)
+                types.Tool(function_declarations=get_all_tool_declarations())
             ]
         return types.GenerateContentConfig(**kwargs)
 
@@ -185,19 +199,49 @@ class LLMClient:
             # Append the model's response to contents (preserves thought signatures)
             contents.append(candidate.content)
 
-            # Process function calls and build responses
-            function_response_parts = []
+            # Prepare tool call metadata
+            fc_meta = []
             for fc_part in function_calls:
                 fc = fc_part.function_call
                 self._tool_call_count += 1
+                fc_meta.append({
+                    "fc_part": fc_part,
+                    "fc": fc,
+                    "call_num": self._tool_call_count,
+                })
                 logger.info("")
                 logger.info("  ┌─ Tool Call #%d: %s", self._tool_call_count, fc.name)
                 logger.info("  │  Args: %s", dict(fc.args) if fc.args else "{}")
 
-                # Execute the tool
+            # Execute tools — parallel if multiple, sequential if single
+            def _run_tool(meta):
+                fc = meta["fc"]
                 t0 = time.time()
                 result = execute_tool(fc.name, dict(fc.args) if fc.args else {})
                 elapsed = time.time() - t0
+                return {**meta, "result": result, "elapsed": elapsed}
+
+            if len(fc_meta) > 1:
+                # Parallel execution for I/O-bound scrapers
+                logger.info("  ⚡ Executing %d tools in parallel",
+                            len(fc_meta))
+                completed = []
+                with ThreadPoolExecutor(max_workers=len(fc_meta)) as pool:
+                    futures = {pool.submit(_run_tool, m): m for m in fc_meta}
+                    for future in as_completed(futures):
+                        completed.append(future.result())
+                # Restore original order
+                completed.sort(key=lambda r: r["call_num"])
+            else:
+                completed = [_run_tool(fc_meta[0])]
+
+            # Process results and build response parts
+            function_response_parts = []
+            for entry in completed:
+                fc = entry["fc"]
+                result = entry["result"]
+                elapsed = entry["elapsed"]
+                call_num = entry["call_num"]
 
                 logger.info("  │  Result: %d chars (%.1fs)",
                             len(result), elapsed)
@@ -214,8 +258,15 @@ class LLMClient:
 
                 # Save raw tool results to run dir
                 if run_dir:
-                    result_file = run_dir / f"tool_{self._tool_call_count}_{fc.name}.txt"
+                    result_file = run_dir / f"tool_{call_num}_{fc.name}.txt"
                     result_file.write_text(result, encoding="utf-8")
+
+                # Condense oversized tool results via chunk-summarization
+                result = self._condense_if_needed(
+                    result, fc.name,
+                    dict(fc.args) if fc.args else {},
+                    user_message,
+                )
 
                 # Build function response part (with id to map back to the call)
                 fr_part = types.Part(
@@ -269,8 +320,21 @@ class LLMClient:
                     config=config,
                 )
                 elapsed = time.time() - t0
-                logger.info("[LLM #%d] API call completed in %.1fs (attempt %d)",
-                            call_id, elapsed, attempt)
+
+                # Track token usage
+                usage = getattr(response, 'usage_metadata', None)
+                if usage:
+                    inp = getattr(usage, 'prompt_token_count', 0) or 0
+                    out = getattr(usage, 'candidates_token_count', 0) or 0
+                    self._total_input_tokens += inp
+                    self._total_output_tokens += out
+                    self._total_tokens += inp + out
+                    logger.info("[LLM #%d] API call completed in %.1fs (attempt %d) "
+                                "— tokens: %d in / %d out",
+                                call_id, elapsed, attempt, inp, out)
+                else:
+                    logger.info("[LLM #%d] API call completed in %.1fs (attempt %d)",
+                                call_id, elapsed, attempt)
                 return response
 
             except Exception as exc:
@@ -336,3 +400,86 @@ class LLMClient:
 
         response = self._call_with_retry(contents, config, call_id)
         return response.text or ""
+
+    # ── Data condensation ─────────────────────────────────────────
+
+    def _condense_if_needed(
+        self,
+        result: str,
+        tool_name: str,
+        tool_args: dict,
+        user_request: str,
+    ) -> str:
+        """
+        If *result* exceeds MAX_TOOL_RESULT_CHARS, split it into chunks,
+        summarize each chunk with a lightweight LLM call, and return the
+        combined summaries.
+
+        This prevents context-window exhaustion when scrapers return
+        massive datasets (e.g. 65K CEO.CA posts = 15MB of text).
+        """
+        if len(result) <= MAX_TOOL_RESULT_CHARS:
+            return result
+
+        original_chars = len(result)
+        logger.info("")
+        logger.info("  ⚡ Tool '%s' returned %d chars (> %d limit) — condensing...",
+                    tool_name, original_chars, MAX_TOOL_RESULT_CHARS)
+
+        # Split into line-aware chunks
+        lines = result.split("\n")
+        chunks: list[str] = []
+        current_chunk: list[str] = []
+        current_size = 0
+
+        for line in lines:
+            line_size = len(line) + 1
+            if current_size + line_size > CHUNK_SIZE_CHARS and current_chunk:
+                chunks.append("\n".join(current_chunk))
+                current_chunk = []
+                current_size = 0
+            current_chunk.append(line)
+            current_size += line_size
+
+        if current_chunk:
+            chunks.append("\n".join(current_chunk))
+
+        logger.info("  Split into %d chunks (%d chars/chunk max)",
+                    len(chunks), CHUNK_SIZE_CHARS)
+
+        # Summarize each chunk
+        system = (
+            "You are a data summarizer for an investment analysis system. "
+            "Extract ALL key facts, sentiments, events, dates, numbers, "
+            "and notable opinions from the data below. "
+            "Preserve specific details (names, tickers, dollar amounts, "
+            "dates, direct quotes). This summary will be used for deeper "
+            "analysis, so be thorough and factual. Do NOT hallucinate."
+        )
+
+        summaries: list[str] = []
+        for i, chunk in enumerate(chunks, 1):
+            logger.info("  Condensing chunk %d/%d (%d chars)...",
+                        i, len(chunks), len(chunk))
+            user_msg = (
+                f"## Context\n\n"
+                f"User request: {user_request}\n"
+                f"Data source: {tool_name}({tool_args})\n\n"
+                f"## Data (chunk {i}/{len(chunks)})\n\n{chunk}"
+            )
+            summary = self.simple_call(
+                system, user_msg,
+                label=f"condense-{i}/{len(chunks)}",
+                agent_name="condenser",
+            )
+            summaries.append(
+                f"## {tool_name} — Condensed Summary (Part {i}/{len(chunks)})\n\n"
+                f"{summary}"
+            )
+
+        combined = "\n\n---\n\n".join(summaries)
+        logger.info(
+            "  ✓ Condensed %d chars → %d chars (%d chunks)",
+            original_chars, len(combined), len(chunks),
+        )
+        return combined
