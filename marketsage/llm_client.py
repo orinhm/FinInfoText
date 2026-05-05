@@ -37,6 +37,11 @@ CHUNK_SIZE_CHARS = 100_000
 # Max parallel condenser LLM calls
 MAX_CONDENSER_WORKERS = 4
 
+# Max total conversation context (chars) before sending to the LLM.
+# ~350K chars ≈ ~87K tokens, leaving ~73K tokens headroom for output
+# in a 160K context window.
+MAX_CONTEXT_CHARS = 350_000
+
 
 def _load_settings() -> dict[str, Any]:
     with open(_SETTINGS_PATH, encoding="utf-8") as f:
@@ -295,6 +300,24 @@ class LLMClient:
                 types.Content(role="user", parts=function_response_parts)
             )
 
+            # ── Context overflow guard ────────────────────────────────
+            # Estimate total context and shrink if it would crowd out
+            # the model's output budget.
+            total_chars = sum(
+                len(p.text or "")
+                + len(
+                    (p.function_response.response or {}).get("result", "")
+                    if p.function_response else ""
+                )
+                for c in contents for p in c.parts
+            )
+            if total_chars > MAX_CONTEXT_CHARS:
+                logger.info("")
+                logger.info("  ⚠ Context overflow: %d chars > %d limit — "
+                            "re-condensing largest tool results",
+                            total_chars, MAX_CONTEXT_CHARS)
+                self._shrink_context(contents, user_message, MAX_CONTEXT_CHARS)
+
         # Iteration limit reached — ask for final response without tools
         logger.warning("  ⚠ Tool iteration limit (%d) reached — requesting final response",
                        MAX_TOOL_ITERATIONS)
@@ -415,22 +438,96 @@ class LLMClient:
 
     # ── Data condensation ─────────────────────────────────────────
 
+    def _shrink_context(
+        self,
+        contents: list,
+        user_request: str,
+        target_chars: int,
+    ) -> None:
+        """
+        Shrink conversation context in-place by re-condensing the largest
+        function_response results until total size fits within *target_chars*.
+
+        Called when accumulated tool results exceed MAX_CONTEXT_CHARS,
+        which would leave no room for the model's output.
+        """
+        types = self._types
+
+        # Collect all function_response parts with their sizes
+        fr_refs: list[tuple[int, int, int, str]] = []  # (content_idx, part_idx, size, name)
+        for ci, content in enumerate(contents):
+            for pi, part in enumerate(content.parts):
+                if part.function_response:
+                    result = (part.function_response.response or {}).get("result", "")
+                    fr_refs.append((ci, pi, len(result), part.function_response.name))
+
+        # Sort by size descending — shrink the biggest first
+        fr_refs.sort(key=lambda r: r[2], reverse=True)
+
+        for ci, pi, size, name in fr_refs:
+            # Re-estimate total
+            total = sum(
+                len(p.text or "")
+                + len(
+                    (p.function_response.response or {}).get("result", "")
+                    if p.function_response else ""
+                )
+                for c in contents for p in c.parts
+            )
+            if total <= target_chars:
+                logger.info("  ✓ Context shrunk to %d chars (target: %d)",
+                            total, target_chars)
+                break
+
+            part = contents[ci].parts[pi]
+            result = (part.function_response.response or {}).get("result", "")
+
+            # Only re-condense if this part is large enough to matter
+            if len(result) < 10_000:
+                continue
+
+            # Target: shrink this result to fit proportionally
+            overshoot = total - target_chars
+            new_max = max(len(result) - overshoot, len(result) // 4)
+
+            logger.info("  Shrinking %s result: %d → ~%d chars",
+                        name, len(result), new_max)
+
+            condensed = self._condense_if_needed(
+                result, name, {}, user_request,
+                force_max_chars=new_max,
+            )
+
+            # Replace the part in-place
+            contents[ci].parts[pi] = types.Part(
+                function_response=types.FunctionResponse(
+                    name=name,
+                    response={"result": condensed},
+                    id=part.function_response.id,
+                )
+            )
+
     def _condense_if_needed(
         self,
         result: str,
         tool_name: str,
         tool_args: dict,
         user_request: str,
+        force_max_chars: int | None = None,
     ) -> str:
         """
-        If *result* exceeds MAX_TOOL_RESULT_CHARS, split it into chunks,
+        If *result* exceeds the size threshold, split it into chunks,
         summarize each chunk with a lightweight LLM call, and return the
         combined summaries.
 
-        This prevents context-window exhaustion when scrapers return
-        massive datasets (e.g. 65K CEO.CA posts = 15MB of text).
+        Parameters
+        ----------
+        force_max_chars : int, optional
+            If set, override MAX_TOOL_RESULT_CHARS with this value.
+            Used by _shrink_context for second-pass condensation.
         """
-        if len(result) <= MAX_TOOL_RESULT_CHARS:
+        threshold = force_max_chars if force_max_chars is not None else MAX_TOOL_RESULT_CHARS
+        if len(result) <= threshold:
             return result
 
         original_chars = len(result)
