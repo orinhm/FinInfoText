@@ -475,7 +475,7 @@ def main() -> None:
                 give also for each month a summary of major disagreements amongst the message board participants
                             """
         request = """
-                    look at gold mining stock message boards in ceo.ca (NFGC, Kinross, Alamos... whatever other stocks) over the last 5 years.
+                    look at gold mining stock message boards in ceo.ca (NFGC, Kinross, Alamos... whatever other stocks) over the last 2 years.
                     try to learn everything you can about the mining business, pitfalls processes in mining and finance and whatever category 
                     you can learn
                     """

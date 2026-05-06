@@ -1,19 +1,29 @@
 """
-Generic Agent engine — every agent is an *instance* configured by files.
+Sector-first Agent engine — agents are composed from base roles + sector
+specializations, with cross-sector inheritance support.
 
-An agent directory (e.g. ``agents/executive/gold/``) contains:
-- ``prompt.md``    — the agent's system-prompt fragment
-- ``knowledge/``   — directory of curated ``.md`` knowledge files
+An agent is loaded by building a **resolution chain** from:
+  1. The sector's own ``agents/{role}/`` files
+  2. Walking up the directory tree (parent sectors)
+  3. Cross-sector inherited sectors (declared in ``sector.md`` frontmatter)
+  4. The root-level ``agents/{role}/`` (universal base)
 
-**Inheritance**: a child directory (``executive/gold/``) inherits from its
-parent (``executive/``).  The resolved prompt is parent-first concatenation;
-the resolved knowledge is parent-first concatenation of every ``.md`` file
-in each ``knowledge/`` directory.
+Composition rules:
+  - **prompt.md** → Override (most-specific wins)
+  - **knowledge.md** → Merge (all levels accumulated)
+  - **sector.md** → Merge (all levels accumulated)
+  - **Supplementary .md files** → Merge (all collected)
+
+Multi-sector assets declare ``sectors:`` in their frontmatter, which
+tells the orchestrator to load sector context from multiple branches.
 
 Usage::
 
-    agent = Agent("agents/executive/gold", vault_chain=[...])
+    agent = Agent(role="executive", sector_path="commodities/precious_metals/gold")
     response = agent.analyze(data_text, user_request, llm_client)
+
+    # Base-only (no sector specialization)
+    agent = Agent(role="geopolitical")
 """
 
 from __future__ import annotations
@@ -29,68 +39,153 @@ logger = logging.getLogger("marketsage.agent")
 if TYPE_CHECKING:
     from marketsage.llm_client import LLMClient
 
-# The ``agents/`` root lives inside the marketsage package.
-AGENTS_ROOT = Path(__file__).parent / "agents"
+# The ``knowledge/`` root lives at the project root.
+KNOWLEDGE_ROOT = Path(__file__).parent.parent / "knowledge"
 
 
 # ---------------------------------------------------------------------------
-# Inheritance resolution
+# File loading helpers
 # ---------------------------------------------------------------------------
 
-def resolve_chain(agent_dir: Path) -> list[Path]:
-    """
-    Walk *agent_dir* upward until we reach ``AGENTS_ROOT`` and return
-    the chain from **root-first** (ancestor → child).
+def _load_prompt(path: Path) -> str:
+    """Load a prompt.md file, stripping frontmatter."""
+    if path.exists():
+        _, body = read_frontmatter(path)
+        return body.strip()
+    return ""
 
-    Example:
-        resolve_chain(".../agents/executive/gold")
-        → [".../agents/executive", ".../agents/executive/gold"]
+
+def _load_knowledge_file(path: Path) -> str:
+    """Load a knowledge.md file, stripping frontmatter."""
+    if path.exists():
+        _, body = read_frontmatter(path)
+        return body.strip()
+    return ""
+
+
+def _load_supplementary_files(agent_dir: Path) -> list[tuple[str, str]]:
     """
-    chain: list[Path] = []
-    cur = agent_dir.resolve()
-    root = AGENTS_ROOT.resolve()
-    while cur != root and cur != cur.parent:
-        chain.append(cur)
-        cur = cur.parent
-    chain.reverse()           # root-first
+    Load all .md files from an agent directory EXCEPT prompt.md and knowledge.md.
+    These are curated reference docs (e.g., strategy_patterns.md, sources.md).
+    Returns [(name, content)].
+    """
+    results = []
+    if agent_dir.is_dir():
+        for md in sorted(agent_dir.glob("*.md")):
+            if md.name in ("prompt.md", "knowledge.md"):
+                continue
+            _, body = read_frontmatter(md)
+            content = body.strip()
+            if content:
+                results.append((md.stem, content))
+    return results
+
+
+def _load_sector_md(sector_path: Path) -> str:
+    """Load sector.md from a directory, stripping frontmatter."""
+    sector_file = sector_path / "sector.md"
+    if sector_file.exists():
+        _, body = read_frontmatter(sector_file)
+        return body.strip()
+    return ""
+
+
+def _read_inherits(sector_path: Path) -> list[str]:
+    """
+    Read the ``inherits:`` list from a sector.md frontmatter.
+    Returns a list of relative sector paths, e.g. ['commodities/precious_metals'].
+    """
+    sector_file = sector_path / "sector.md"
+    if not sector_file.exists():
+        return []
+    fm, _ = read_frontmatter(sector_file)
+    inherits = fm.get("inherits", [])
+    if isinstance(inherits, str):
+        inherits = [inherits]
+    return inherits or []
+
+
+# ---------------------------------------------------------------------------
+# Resolution chain builder
+# ---------------------------------------------------------------------------
+
+def resolve_sector_chain(sector_path: str | None) -> list[str]:
+    """
+    Build the ordered list of sector paths to compose knowledge from.
+
+    Resolution order:
+      1. The sector itself
+      2. Walk up parent directories (natural inheritance)
+      3. Cross-sector inherits (declared in sector.md frontmatter)
+         — including THEIR parents, recursively
+      4. Root (always included, deduplicated)
+
+    The empty string '' represents the root level.
+
+    Returns paths relative to KNOWLEDGE_ROOT, e.g.:
+        ['equities/mining', 'equities', 'commodities/precious_metals',
+         'commodities', '']
+
+    Parameters
+    ----------
+    sector_path : str or None
+        Sector path relative to KNOWLEDGE_ROOT, e.g.
+        'equities/mining'. If None, returns just the root.
+    """
+    if not sector_path:
+        return [""]
+
+    seen: set[str] = set()
+    chain: list[str] = []
+
+    def _add(path: str) -> None:
+        if path not in seen:
+            seen.add(path)
+            chain.append(path)
+
+    # 1. The sector itself
+    _add(sector_path)
+
+    # 2. Walk up parent directories
+    parts = sector_path.split("/")
+    for i in range(len(parts) - 1, 0, -1):
+        parent = "/".join(parts[:i])
+        _add(parent)
+
+    # 3. Cross-sector inherits (from the sector itself)
+    inherited = _read_inherits(KNOWLEDGE_ROOT / sector_path)
+    for inherited_path in inherited:
+        _expand_inherited(inherited_path, seen, chain)
+
+    # 4. Root (always last, deduplicated)
+    _add("")
+
     return chain
 
 
-def load_prompt_chain(chain: list[Path]) -> str:
-    """Concatenate ``prompt.md`` files along the inheritance chain."""
-    parts: list[str] = []
-    for d in chain:
-        p = d / "prompt.md"
-        if p.exists():
-            _, body = read_frontmatter(p)
-            parts.append(body.strip())
-    return "\n\n---\n\n".join(parts)
+def _expand_inherited(sector_path: str, seen: set[str], chain: list[str]) -> None:
+    """
+    Recursively expand an inherited sector and its parents into the chain.
+    """
+    if sector_path in seen:
+        return
 
+    # Add the inherited sector itself
+    seen.add(sector_path)
+    chain.append(sector_path)
 
-def load_knowledge_chain(chain: list[Path]) -> str:
-    """Concatenate every ``.md`` file in each ``knowledge/`` dir."""
-    parts: list[str] = []
-    for d in chain:
-        kdir = d / "knowledge"
-        if kdir.is_dir():
-            for md in sorted(kdir.glob("*.md")):
-                _, body = read_frontmatter(md)
-                content = body.strip()
-                if content:
-                    parts.append(f"## [{md.stem}]\n\n{content}")
-    return "\n\n---\n\n".join(parts)
+    # Add its parents
+    parts = sector_path.split("/")
+    for i in range(len(parts) - 1, 0, -1):
+        parent = "/".join(parts[:i])
+        if parent not in seen:
+            seen.add(parent)
+            chain.append(parent)
 
-
-def load_vault_chain(vault_files: list[Path]) -> str:
-    """Concatenate vault ``.md`` files (commodities → sector → asset)."""
-    parts: list[str] = []
-    for vf in vault_files:
-        if vf.exists():
-            _, body = read_frontmatter(vf)
-            content = body.strip()
-            if content:
-                parts.append(content)
-    return "\n\n---\n\n".join(parts)
+    # Recurse into the inherited sector's own inherits
+    nested_inherits = _read_inherits(KNOWLEDGE_ROOT / sector_path)
+    for nested_path in nested_inherits:
+        _expand_inherited(nested_path, seen, chain)
 
 
 # ---------------------------------------------------------------------------
@@ -99,55 +194,115 @@ def load_vault_chain(vault_files: list[Path]) -> str:
 
 class Agent:
     """
-    A prompt-driven, LLM-backed agent.
+    A sector-aware, prompt-driven agent with inheritance support.
 
     Parameters
     ----------
-    agent_path : str | Path
-        Relative (to ``AGENTS_ROOT``) or absolute path to the agent directory.
-    vault_chain : list[Path], optional
-        Ordered list of vault ``.md`` files to include as context.
+    role : str
+        The agent role: 'accountant', 'executive', 'trader', etc.
+    sector_path : str, optional
+        Sector path relative to KNOWLEDGE_ROOT, e.g.
+        'commodities/precious_metals/gold'. If None, loads base-only.
     """
 
     def __init__(
         self,
-        agent_path: str | Path,
-        vault_chain: list[Path] | None = None,
+        role: str,
+        sector_path: str | None = None,
     ):
-        d = Path(agent_path)
-        self.agent_dir: Path = d if d.is_absolute() else AGENTS_ROOT / d
-        if not self.agent_dir.is_dir():
-            raise FileNotFoundError(f"Agent directory not found: {self.agent_dir}")
+        self.role = role
+        self.sector_path = sector_path
 
-        self.name: str = self.agent_dir.name
-        self._chain = resolve_chain(self.agent_dir)
-        self._vault_chain = vault_chain or []
+        # Build the resolution chain
+        self._chain = resolve_sector_chain(sector_path)
+
+        # --- Resolve prompt (override — most specific wins) ---
+        self._prompt = ""
+        for sp in self._chain:
+            if sp == "":
+                agent_dir = KNOWLEDGE_ROOT / "agents" / role
+            else:
+                agent_dir = KNOWLEDGE_ROOT / sp / "agents" / role
+            prompt = _load_prompt(agent_dir / "prompt.md")
+            if prompt:
+                self._prompt = prompt
+                break  # Most-specific wins
+
+        # --- Resolve knowledge (merge — accumulate all) ---
+        # Walk from LEAST specific to MOST specific so newer learnings appear last
+        self._knowledge_parts: list[tuple[str, str]] = []
+        for sp in reversed(self._chain):
+            if sp == "":
+                agent_dir = KNOWLEDGE_ROOT / "agents" / role
+                label = "Cross-Sector"
+            else:
+                agent_dir = KNOWLEDGE_ROOT / sp / "agents" / role
+                label = sp.split("/")[-1].replace("_", " ").title()
+
+            knowledge = _load_knowledge_file(agent_dir / "knowledge.md")
+            if knowledge:
+                self._knowledge_parts.append((f"{label} Learnings", knowledge))
+
+            # Also load supplementary files (e.g., strategy_patterns.md)
+            for name, content in _load_supplementary_files(agent_dir):
+                self._knowledge_parts.append(
+                    (f"{label} — {name.replace('_', ' ').title()}", content)
+                )
+
+        # --- Resolve sector context (merge — accumulate all) ---
+        # Walk from LEAST specific to MOST specific
+        self._sector_context_parts: list[tuple[str, str]] = []
+        for sp in reversed(self._chain):
+            if sp == "":
+                ctx = _load_sector_md(KNOWLEDGE_ROOT)
+                label = "Universal"
+            else:
+                ctx = _load_sector_md(KNOWLEDGE_ROOT / sp)
+                label = sp.split("/")[-1].replace("_", " ").title()
+            if ctx:
+                self._sector_context_parts.append((label, ctx))
+
+        # Build chain string for logging
+        chain_display = [
+            f"agents/{role}" if sp == "" else f"{sp}/agents/{role}"
+            for sp in self._chain
+        ]
+        self._chain_str = " → ".join(chain_display)
 
         logger.info("  Agent initialized: %s", self)
-        logger.info("    Inheritance chain: %s",
-                    " → ".join(d.name for d in self._chain))
-        logger.info("    Vault files: %d", len(self._vault_chain))
-        for vf in self._vault_chain:
-            logger.info("      - %s", vf.name)
+        logger.info("    Resolution chain: %s", self._chain_str)
 
     # ── context building ──────────────────────────────────────────────
 
     @property
     def system_prompt(self) -> str:
-        """Full system prompt: inherited prompts + knowledge + vault."""
-        prompt = load_prompt_chain(self._chain)
-        knowledge = load_knowledge_chain(self._chain)
-        vault = load_vault_chain(self._vault_chain)
+        """Full system prompt: prompt + sector context + knowledge."""
+        sections = []
 
-        sections = [prompt]
-        if knowledge:
+        # 1. Agent prompt (most-specific override)
+        if self._prompt:
+            sections.append(self._prompt)
+
+        # 2. Sector context (merged from all levels)
+        if self._sector_context_parts:
+            ctx_parts = [
+                f"### {label}\n\n{content}"
+                for label, content in self._sector_context_parts
+            ]
             sections.append(
-                "# Your Curated Knowledge\n\n" + knowledge
+                "# Current Sector Intelligence\n\n" + "\n\n---\n\n".join(ctx_parts)
             )
-        if vault:
+
+        # 3. Knowledge (merged from all levels)
+        if self._knowledge_parts:
+            kparts = [
+                f"### {label}\n\n{content}"
+                for label, content in self._knowledge_parts
+            ]
             sections.append(
-                "# Current Intelligence (Vault)\n\n" + vault
+                "# Accumulated Knowledge\n\n" + "\n\n---\n\n".join(kparts)
             )
+
         return "\n\n===\n\n".join(sections)
 
     # ── LLM interaction ───────────────────────────────────────────────
@@ -156,22 +311,6 @@ class Agent:
                 llm: LLMClient, label: str = "analysis") -> str:
         """
         Run the agent: build system prompt, call the LLM.
-
-        Parameters
-        ----------
-        data : str
-            Fetched data (spiels, articles, etc.) as text.
-        user_request : str
-            The original user query.
-        llm : LLMClient
-            Configured LLM client instance.
-        label : str
-            Label for this call in logs.
-
-        Returns
-        -------
-        str
-            The LLM's response.
         """
         user_msg_parts = []
         if data:
@@ -179,29 +318,92 @@ class Agent:
         user_msg_parts.append(f"## Request\n\n{user_request}")
         user_message = "\n\n".join(user_msg_parts)
 
-        chain_str = "/".join(d.name for d in self._chain)
         return llm.call(self.system_prompt, user_message,
-                        label=label, agent_name=chain_str)
+                        label=label, agent_name=self._chain_str)
 
     def __repr__(self) -> str:
-        chain_str = " → ".join(d.name for d in self._chain)
-        return f"Agent({chain_str})"
+        return f"Agent({self._chain_str})"
 
 
 # ---------------------------------------------------------------------------
 # Discovery
 # ---------------------------------------------------------------------------
 
-def discover_agents(root: Path | None = None) -> dict[str, Path]:
+def discover_sector_agents(sector_path: str | None = None) -> list[str]:
     """
-    Scan the agents directory tree and return a mapping of
-    agent path keys (e.g. ``"executive/gold"``) to absolute dirs.
-    Only directories containing a ``prompt.md`` are considered agents.
+    List available agent roles for a given sector.
+
+    If sector_path is None, lists all base roles.
+
+    Returns a list of role names, e.g. ['accountant', 'executive', 'trader'].
     """
-    root = (root or AGENTS_ROOT).resolve()
-    agents: dict[str, Path] = {}
-    for prompt_file in root.rglob("prompt.md"):
-        agent_dir = prompt_file.parent
-        key = str(agent_dir.relative_to(root))
-        agents[key] = agent_dir
-    return agents
+    if sector_path:
+        agents_dir = (KNOWLEDGE_ROOT / sector_path / "agents").resolve()
+    else:
+        agents_dir = (KNOWLEDGE_ROOT / "agents").resolve()
+
+    if not agents_dir.is_dir():
+        return []
+
+    roles = []
+    for d in sorted(agents_dir.iterdir()):
+        if d.is_dir() and (d / "prompt.md").exists():
+            roles.append(d.name)
+    return roles
+
+
+def discover_all_sectors() -> dict[str, list[str]]:
+    """
+    Walk the entire knowledge tree and return a mapping of
+    sector paths to their available agent roles.
+
+    Returns::
+
+        {
+            'commodities/precious_metals/gold': ['accountant', 'executive', 'trader', 'auditor'],
+            'equities/tech': ['executive', 'trader'],
+            'equities/mining': ['accountant'],
+            ...
+        }
+    """
+    results: dict[str, list[str]] = {}
+    root = KNOWLEDGE_ROOT.resolve()
+
+    for agents_dir in root.rglob("agents"):
+        if not agents_dir.is_dir():
+            continue
+        try:
+            rel = agents_dir.relative_to(root)
+        except ValueError:
+            continue
+
+        # Skip the root-level agents/ (these are base roles, not sector agents)
+        rel_str = str(rel)
+        if rel_str == "agents":
+            continue
+
+        # Sector path is everything before /agents
+        sector_path = str(rel.parent)
+        roles = []
+        for d in sorted(agents_dir.iterdir()):
+            if d.is_dir() and (d / "prompt.md").exists():
+                roles.append(d.name)
+        if roles:
+            results[sector_path] = roles
+
+    return results
+
+
+def load_asset_sectors(asset_path: str) -> list[str]:
+    """
+    Read the ``sectors:`` frontmatter from an asset file.
+
+    Returns a list of sector paths, e.g.::
+
+        ['commodities/precious_metals/gold', 'commodities/base_metals/copper']
+    """
+    full_path = KNOWLEDGE_ROOT / asset_path
+    if not full_path.exists():
+        return []
+    fm, _ = read_frontmatter(full_path)
+    return fm.get("sectors", [])
