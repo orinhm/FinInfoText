@@ -34,8 +34,8 @@ MAX_TOOL_RESULT_CHARS = 200_000
 # leaving ample room for system prompt + response in a summarization call)
 CHUNK_SIZE_CHARS = 100_000
 
-# Max parallel condenser LLM calls
-MAX_CONDENSER_WORKERS = 4
+# Max parallel condenser LLM calls (keep low to avoid API rate limits)
+MAX_CONDENSER_WORKERS = 2
 
 # Max total conversation context (chars) before sending to the LLM.
 # ~350K chars ≈ ~87K tokens, leaving ~73K tokens headroom for output
