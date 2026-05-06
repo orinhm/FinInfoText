@@ -57,7 +57,24 @@ class LLMClient:
     """
 
     def __init__(self, settings: dict[str, Any] | None = None):
-        cfg = (settings or _load_settings()).get("llm", {})
+        all_settings = settings or _load_settings()
+
+        # Resolve LLM config from profiles or legacy flat section
+        active_name = all_settings.get("active_llm", "")
+        profiles = all_settings.get("llm_profiles", {})
+        if active_name and active_name in profiles:
+            cfg = profiles[active_name]
+            logger.info("  LLM profile: %s", active_name)
+        elif profiles:
+            # active_llm missing or invalid — use first profile
+            first_name = next(iter(profiles))
+            cfg = profiles[first_name]
+            logger.warning("  ⚠ active_llm '%s' not found, using '%s'",
+                           active_name, first_name)
+        else:
+            # Backward compat: old flat llm: section
+            cfg = all_settings.get("llm", {})
+
         self.provider: str = cfg.get("provider", "gemini")
         self.model: str = cfg.get("model", "gemini-2.0-flash-001")
         self.temperature: float = cfg.get("temperature", 0.3)
