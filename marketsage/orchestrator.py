@@ -389,23 +389,27 @@ class Orchestrator:
 
         # ── Post-run: apply pending prompt proposals ─────────────────
         prompts_applied = []
-        try:
-            from marketsage.admin import apply_all as admin_apply_all
-            results = admin_apply_all()
-            # Filter out the "no pending" and "skipping tool" messages
-            prompts_applied = [
-                r for r in results
-                if r.startswith("✓") or r.startswith("❌")
-            ]
-            if prompts_applied:
-                logger.info("")
-                logger.info("📝 Prompt Evolution: %d proposal(s) processed",
-                            len(prompts_applied))
-                for r in prompts_applied:
-                    logger.info("   %s", r.split("\n")[0])
-        except Exception as exc:
-            logger.warning("Prompt evolution phase failed: %s", exc,
-                           exc_info=True)
+        admin_cfg = self.settings.get("admin", {})
+        if admin_cfg.get("prompt_evolution", False):
+            try:
+                from marketsage.admin import apply_all as admin_apply_all
+                results = admin_apply_all()
+                # Filter out the "no pending" and "skipping tool" messages
+                prompts_applied = [
+                    r for r in results
+                    if r.startswith("✓") or r.startswith("❌")
+                ]
+                if prompts_applied:
+                    logger.info("")
+                    logger.info("📝 Prompt Evolution: %d proposal(s) processed",
+                                len(prompts_applied))
+                    for r in prompts_applied:
+                        logger.info("   %s", r.split("\n")[0])
+            except Exception as exc:
+                logger.warning("Prompt evolution phase failed: %s", exc,
+                               exc_info=True)
+        else:
+            logger.info("  Prompt evolution: disabled (admin.prompt_evolution=false)")
 
         # ── Update run summary with tool builder + prompt results ──────
         if self.run_dir and summary:
