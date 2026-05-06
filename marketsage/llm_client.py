@@ -96,6 +96,10 @@ class BaseLLMClient(ABC):
         """Initialize the provider SDK client."""
 
     @abstractmethod
+    def list_models(self) -> list[str]:
+        """List available model names for this provider/key."""
+
+    @abstractmethod
     def _api_call(self, messages: Any, system: str,
                   tools: Any | None) -> Any:
         """Make a single API call. Returns raw provider response."""
@@ -522,3 +526,38 @@ def create_llm_client(
 
 # Backward-compatible alias
 LLMClient = create_llm_client
+
+
+def list_profile_models(profile_name: str | None = None) -> list[str]:
+    """
+    List available models for a given profile (or the active one).
+
+    Parameters
+    ----------
+    profile_name : str, optional
+        Name from llm_profiles in settings.yaml.
+        If None, uses active_llm.
+    """
+    settings = _load_settings()
+    if profile_name:
+        settings["active_llm"] = profile_name
+    llm = create_llm_client(settings)
+    return llm.list_models()
+
+
+if __name__ == "__main__":
+    import sys
+    profile = sys.argv[1] if len(sys.argv) > 1 else None
+    settings = _load_settings()
+
+    if profile:
+        settings["active_llm"] = profile
+
+    llm = create_llm_client(settings)
+    print(f"Provider: {llm.provider}")
+    print(f"Model:    {llm.model}")
+    print(f"API key:  {llm.api_key[:12]}...")
+    print()
+    print("Available models:")
+    for m in llm.list_models():
+        print(f"  {m}")

@@ -26,6 +26,13 @@ class OpenAIClient(BaseLLMClient):
                 "openai SDK not installed. Run: pip install openai"
             ) from exc
 
+    def list_models(self) -> list[str]:
+        models = []
+        for m in self._client.models.list():
+            models.append(m.id)
+        models.sort()
+        return models
+
     def _api_call(self, messages: list[dict], system: str,
                   tools: Any | None) -> Any:
         # Ensure system message is first
