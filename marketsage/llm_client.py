@@ -545,19 +545,75 @@ def list_profile_models(profile_name: str | None = None) -> list[str]:
     return llm.list_models()
 
 
+def refresh_available_models() -> Path:
+    """
+    Query every profile in settings.yaml for available models and
+    write the results to ``marketsage/available_models.yaml``.
+
+    Returns the path to the written file.
+    """
+    from datetime import datetime, timezone
+
+    settings = _load_settings()
+    profiles = settings.get("llm_profiles", {})
+    if not profiles:
+        raise ValueError("No llm_profiles found in settings.yaml")
+
+    output: dict[str, Any] = {
+        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "profiles": {},
+    }
+
+    # De-duplicate API keys to avoid redundant calls
+    seen_keys: dict[str, list[str]] = {}  # api_key -> model list
+    for name, cfg in profiles.items():
+        provider = cfg.get("provider", "gemini")
+        api_key = cfg.get("api_key", "") or ""
+
+        cache_key = f"{provider}:{api_key[:20]}"
+        if cache_key in seen_keys:
+            models = seen_keys[cache_key]
+        else:
+            try:
+                settings_copy = dict(settings)
+                settings_copy["active_llm"] = name
+                llm = create_llm_client(settings_copy)
+                models = llm.list_models()
+                seen_keys[cache_key] = models
+            except Exception as exc:
+                models = [f"ERROR: {exc}"]
+                seen_keys[cache_key] = models
+
+        output["profiles"][name] = {
+            "provider": provider,
+            "model_count": len(models),
+            "models": models,
+        }
+
+    out_path = Path(__file__).parent / "available_models.yaml"
+    with open(out_path, "w", encoding="utf-8") as f:
+        yaml.dump(output, f, default_flow_style=False, sort_keys=False,
+                  allow_unicode=True)
+
+    return out_path
+
+
 if __name__ == "__main__":
     import sys
-    profile = sys.argv[1] if len(sys.argv) > 1 else None
-    settings = _load_settings()
 
-    if profile:
-        settings["active_llm"] = profile
-
-    llm = create_llm_client(settings)
-    print(f"Provider: {llm.provider}")
-    print(f"Model:    {llm.model}")
-    print(f"API key:  {llm.api_key[:12]}...")
-    print()
-    print("Available models:")
-    for m in llm.list_models():
-        print(f"  {m}")
+    if "--refresh" in sys.argv:
+        path = refresh_available_models()
+        print(f"✓ Written to {path}")
+    else:
+        profile = sys.argv[1] if len(sys.argv) > 1 else None
+        settings = _load_settings()
+        if profile:
+            settings["active_llm"] = profile
+        llm = create_llm_client(settings)
+        print(f"Provider: {llm.provider}")
+        print(f"Model:    {llm.model}")
+        print(f"API key:  {llm.api_key[:12]}...")
+        print()
+        print("Available models:")
+        for m in llm.list_models():
+            print(f"  {m}")
