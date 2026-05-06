@@ -586,7 +586,7 @@ def refresh_available_models() -> Path:
                 models = [f"ERROR: {exc}"]
                 seen_keys[cache_key] = models
 
-        # Build model entries with pricing and description
+        # Build model entries with pricing, context, and description
         model_entries = []
         for m in models:
             entry: dict[str, Any] = {"id": m}
@@ -596,6 +596,8 @@ def refresh_available_models() -> Path:
                     "input": info["input"],
                     "output": info["output"]
                 }
+                if info.get("context_window_k"):
+                    entry["context_window_k"] = info["context_window_k"]
                 if info.get("description"):
                     entry["description"] = info["description"]
             model_entries.append(entry)
