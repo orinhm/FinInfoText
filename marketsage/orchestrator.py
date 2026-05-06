@@ -24,7 +24,7 @@ from typing import Any
 import yaml
 
 from marketsage.agent import KNOWLEDGE_ROOT, discover_all_sectors
-from marketsage.llm_client import LLMClient
+from marketsage.llm_client import BaseLLMClient, create_llm_client
 
 logger = logging.getLogger("marketsage.orchestrator")
 
@@ -67,7 +67,7 @@ def _build_tool_catalog() -> str:
     return "\n".join(lines)
 
 
-def _generate_output_format(llm: LLMClient, user_request: str) -> str:
+def _generate_output_format(llm: BaseLLMClient, user_request: str) -> str:
     """
     Use a lightweight LLM call to generate an output format
     tailored to the user's specific request.
@@ -91,7 +91,7 @@ def _generate_output_format(llm: LLMClient, user_request: str) -> str:
     )
 
 
-def _build_system_prompt(llm: LLMClient, user_request: str) -> str:
+def _build_system_prompt(llm: BaseLLMClient, user_request: str) -> str:
     """
     Build the system prompt that gives the LLM its identity,
     available tools context, and knowledge tree overview.
@@ -278,7 +278,7 @@ class Orchestrator:
     def __init__(self, settings: dict[str, Any] | None = None,
                  run_dir: Path | None = None):
         self.settings = settings or _load_settings()
-        self.llm = LLMClient(self.settings)
+        self.llm = create_llm_client(self.settings)
         self.run_dir = run_dir
         if run_dir:
             os.environ["MARKETSAGE_RUN_DIR"] = str(run_dir)
