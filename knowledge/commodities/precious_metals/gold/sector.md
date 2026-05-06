@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-05-05T11:23:44.463106+00:00'
-revision: 6
-summary: 'Learning: Contingent Value Rights (CVRs) in mining M&A (e.g., Kinross '
+last_modified: '2026-05-06T10:11:21.672860+00:00'
+revision: 7
+summary: 'Learning: The ''Orphan Period'' of the Lassonde Curve is a predictable p'
 type: vault
 ---
 # Gold Mining Sector
@@ -25,3 +25,5 @@ type: vault
 - [2026-04-27] Enterprise Value per ounce (EV/oz) is a primary metric for peer benchmarking in the junior mining sector (e.g., comparing NFG to Sokoman or Calibre Mining).
 
 - [2026-05-05] Contingent Value Rights (CVRs) in mining M&A (e.g., Kinross acquiring Great Bear) act as a highly volatile, highly leveraged instrument for retail investors. While they offer massive upside if commercial production/resource thresholds are met, they carry expiration risks, no voting rights, no dividends, and often suffer from severe illiquidity and margin restrictions, making them a double-edged sword.
+
+- [2026-05-06] The 'Orphan Period' of the Lassonde Curve is a predictable phase for junior gold developers, characterized by investor frustration and stagnant stock prices despite ongoing de-risking and positive drill results. This often precedes a re-rating as projects move towards development and production.
