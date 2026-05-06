@@ -1,237 +1,744 @@
-last_updated: '2026-05-06T07:15:34.549142+00:00'
+last_updated: '2026-05-06T08:30:54.982778+00:00'
 profiles:
   gemini-pro:
     provider: gemini
     model_count: 49
-    models: &id001
-    - models/aqa
-    - models/deep-research-max-preview-04-2026
-    - models/deep-research-preview-04-2026
-    - models/deep-research-pro-preview-12-2025
-    - models/gemini-2.0-flash
-    - models/gemini-2.0-flash-001
-    - models/gemini-2.0-flash-lite
-    - models/gemini-2.0-flash-lite-001
-    - models/gemini-2.5-computer-use-preview-10-2025
-    - models/gemini-2.5-flash
-    - models/gemini-2.5-flash-image
-    - models/gemini-2.5-flash-lite
-    - models/gemini-2.5-flash-native-audio-latest
-    - models/gemini-2.5-flash-native-audio-preview-09-2025
-    - models/gemini-2.5-flash-native-audio-preview-12-2025
-    - models/gemini-2.5-flash-preview-tts
-    - models/gemini-2.5-pro
-    - models/gemini-2.5-pro-preview-tts
-    - models/gemini-3-flash-preview
-    - models/gemini-3-pro-image-preview
-    - models/gemini-3-pro-preview
-    - models/gemini-3.1-flash-image-preview
-    - models/gemini-3.1-flash-lite-preview
-    - models/gemini-3.1-flash-live-preview
-    - models/gemini-3.1-flash-tts-preview
-    - models/gemini-3.1-pro-preview
-    - models/gemini-3.1-pro-preview-customtools
-    - models/gemini-embedding-001
-    - models/gemini-embedding-2
-    - models/gemini-embedding-2-preview
-    - models/gemini-flash-latest
-    - models/gemini-flash-lite-latest
-    - models/gemini-pro-latest
-    - models/gemini-robotics-er-1.5-preview
-    - models/gemini-robotics-er-1.6-preview
-    - models/gemma-4-26b-a4b-it
-    - models/gemma-4-31b-it
-    - models/imagen-4.0-fast-generate-001
-    - models/imagen-4.0-generate-001
-    - models/imagen-4.0-ultra-generate-001
-    - models/lyria-3-clip-preview
-    - models/lyria-3-pro-preview
-    - models/nano-banana-pro-preview
-    - models/veo-2.0-generate-001
-    - models/veo-3.0-fast-generate-001
-    - models/veo-3.0-generate-001
-    - models/veo-3.1-fast-generate-preview
-    - models/veo-3.1-generate-preview
-    - models/veo-3.1-lite-generate-preview
+    priced_count: 19
+    models:
+    - id: models/aqa
+    - id: models/deep-research-max-preview-04-2026
+    - id: models/deep-research-preview-04-2026
+    - id: models/deep-research-pro-preview-12-2025
+    - id: models/gemini-2.0-flash
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy fast model. Good, but 3.x is better.
+    - id: models/gemini-2.0-flash-001
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy fast model. Good, but 3.x is better.
+    - id: models/gemini-2.0-flash-lite
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Legacy ultra-cheap model.
+    - id: models/gemini-2.0-flash-lite-001
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Legacy ultra-cheap model.
+    - id: models/gemini-2.5-computer-use-preview-10-2025
+    - id: models/gemini-2.5-flash
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older fast model. Solid general performance.
+    - id: models/gemini-2.5-flash-image
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older fast vision model.
+    - id: models/gemini-2.5-flash-lite
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Older ultra-cheap model. Weak reasoning, only for simple tasks.
+    - id: models/gemini-2.5-flash-native-audio-latest
+    - id: models/gemini-2.5-flash-native-audio-preview-09-2025
+    - id: models/gemini-2.5-flash-native-audio-preview-12-2025
+    - id: models/gemini-2.5-flash-preview-tts
+    - id: models/gemini-2.5-pro
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship. Deep reasoning, but superseded by 3.x.
+    - id: models/gemini-2.5-pro-preview-tts
+    - id: models/gemini-3-flash-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Previous generation fast model. Good for general quick tasks.
+    - id: models/gemini-3-pro-image-preview
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Previous flagship optimized for image analysis.
+    - id: models/gemini-3-pro-preview
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Previous flagship. Strong reasoning, superseded by 3.1-pro.
+    - id: models/gemini-3.1-flash-image-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast vision model. Good for analyzing images quickly and cheaply.
+    - id: models/gemini-3.1-flash-lite-preview
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Ultra-fast, very cheap. Good for simple classification or basic
+        extraction.
+    - id: models/gemini-3.1-flash-live-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast, balanced model optimized for low-latency live streaming/chat.
+    - id: models/gemini-3.1-flash-tts-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast model optimized for Text-to-Speech workloads.
+    - id: models/gemini-3.1-pro-preview
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 12.0
+      description: Flagship. Deep reasoning, coding, and complex analysis. Expensive
+        but very strong.
+    - id: models/gemini-3.1-pro-preview-customtools
+    - id: models/gemini-embedding-001
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Legacy text embeddings.
+    - id: models/gemini-embedding-2
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Modern text embeddings. Best for semantic search.
+    - id: models/gemini-embedding-2-preview
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Modern text embeddings. Best for semantic search.
+    - id: models/gemini-flash-latest
+    - id: models/gemini-flash-lite-latest
+    - id: models/gemini-pro-latest
+    - id: models/gemini-robotics-er-1.5-preview
+    - id: models/gemini-robotics-er-1.6-preview
+    - id: models/gemma-4-26b-a4b-it
+    - id: models/gemma-4-31b-it
+    - id: models/imagen-4.0-fast-generate-001
+    - id: models/imagen-4.0-generate-001
+    - id: models/imagen-4.0-ultra-generate-001
+    - id: models/lyria-3-clip-preview
+    - id: models/lyria-3-pro-preview
+    - id: models/nano-banana-pro-preview
+    - id: models/veo-2.0-generate-001
+    - id: models/veo-3.0-fast-generate-001
+    - id: models/veo-3.0-generate-001
+    - id: models/veo-3.1-fast-generate-preview
+    - id: models/veo-3.1-generate-preview
+    - id: models/veo-3.1-lite-generate-preview
   gemini-flash:
     provider: gemini
     model_count: 49
-    models: *id001
+    priced_count: 19
+    models:
+    - id: models/aqa
+    - id: models/deep-research-max-preview-04-2026
+    - id: models/deep-research-preview-04-2026
+    - id: models/deep-research-pro-preview-12-2025
+    - id: models/gemini-2.0-flash
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy fast model. Good, but 3.x is better.
+    - id: models/gemini-2.0-flash-001
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy fast model. Good, but 3.x is better.
+    - id: models/gemini-2.0-flash-lite
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Legacy ultra-cheap model.
+    - id: models/gemini-2.0-flash-lite-001
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Legacy ultra-cheap model.
+    - id: models/gemini-2.5-computer-use-preview-10-2025
+    - id: models/gemini-2.5-flash
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older fast model. Solid general performance.
+    - id: models/gemini-2.5-flash-image
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older fast vision model.
+    - id: models/gemini-2.5-flash-lite
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Older ultra-cheap model. Weak reasoning, only for simple tasks.
+    - id: models/gemini-2.5-flash-native-audio-latest
+    - id: models/gemini-2.5-flash-native-audio-preview-09-2025
+    - id: models/gemini-2.5-flash-native-audio-preview-12-2025
+    - id: models/gemini-2.5-flash-preview-tts
+    - id: models/gemini-2.5-pro
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship. Deep reasoning, but superseded by 3.x.
+    - id: models/gemini-2.5-pro-preview-tts
+    - id: models/gemini-3-flash-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Previous generation fast model. Good for general quick tasks.
+    - id: models/gemini-3-pro-image-preview
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Previous flagship optimized for image analysis.
+    - id: models/gemini-3-pro-preview
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Previous flagship. Strong reasoning, superseded by 3.1-pro.
+    - id: models/gemini-3.1-flash-image-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast vision model. Good for analyzing images quickly and cheaply.
+    - id: models/gemini-3.1-flash-lite-preview
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Ultra-fast, very cheap. Good for simple classification or basic
+        extraction.
+    - id: models/gemini-3.1-flash-live-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast, balanced model optimized for low-latency live streaming/chat.
+    - id: models/gemini-3.1-flash-tts-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast model optimized for Text-to-Speech workloads.
+    - id: models/gemini-3.1-pro-preview
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 12.0
+      description: Flagship. Deep reasoning, coding, and complex analysis. Expensive
+        but very strong.
+    - id: models/gemini-3.1-pro-preview-customtools
+    - id: models/gemini-embedding-001
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Legacy text embeddings.
+    - id: models/gemini-embedding-2
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Modern text embeddings. Best for semantic search.
+    - id: models/gemini-embedding-2-preview
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Modern text embeddings. Best for semantic search.
+    - id: models/gemini-flash-latest
+    - id: models/gemini-flash-lite-latest
+    - id: models/gemini-pro-latest
+    - id: models/gemini-robotics-er-1.5-preview
+    - id: models/gemini-robotics-er-1.6-preview
+    - id: models/gemma-4-26b-a4b-it
+    - id: models/gemma-4-31b-it
+    - id: models/imagen-4.0-fast-generate-001
+    - id: models/imagen-4.0-generate-001
+    - id: models/imagen-4.0-ultra-generate-001
+    - id: models/lyria-3-clip-preview
+    - id: models/lyria-3-pro-preview
+    - id: models/nano-banana-pro-preview
+    - id: models/veo-2.0-generate-001
+    - id: models/veo-3.0-fast-generate-001
+    - id: models/veo-3.0-generate-001
+    - id: models/veo-3.1-fast-generate-preview
+    - id: models/veo-3.1-generate-preview
+    - id: models/veo-3.1-lite-generate-preview
   gemini-pro-alt:
     provider: gemini
     model_count: 49
+    priced_count: 19
     models:
-    - models/aqa
-    - models/deep-research-max-preview-04-2026
-    - models/deep-research-preview-04-2026
-    - models/deep-research-pro-preview-12-2025
-    - models/gemini-2.0-flash
-    - models/gemini-2.0-flash-001
-    - models/gemini-2.0-flash-lite
-    - models/gemini-2.0-flash-lite-001
-    - models/gemini-2.5-computer-use-preview-10-2025
-    - models/gemini-2.5-flash
-    - models/gemini-2.5-flash-image
-    - models/gemini-2.5-flash-lite
-    - models/gemini-2.5-flash-native-audio-latest
-    - models/gemini-2.5-flash-native-audio-preview-09-2025
-    - models/gemini-2.5-flash-native-audio-preview-12-2025
-    - models/gemini-2.5-flash-preview-tts
-    - models/gemini-2.5-pro
-    - models/gemini-2.5-pro-preview-tts
-    - models/gemini-3-flash-preview
-    - models/gemini-3-pro-image-preview
-    - models/gemini-3-pro-preview
-    - models/gemini-3.1-flash-image-preview
-    - models/gemini-3.1-flash-lite-preview
-    - models/gemini-3.1-flash-live-preview
-    - models/gemini-3.1-flash-tts-preview
-    - models/gemini-3.1-pro-preview
-    - models/gemini-3.1-pro-preview-customtools
-    - models/gemini-embedding-001
-    - models/gemini-embedding-2
-    - models/gemini-embedding-2-preview
-    - models/gemini-flash-latest
-    - models/gemini-flash-lite-latest
-    - models/gemini-pro-latest
-    - models/gemini-robotics-er-1.5-preview
-    - models/gemini-robotics-er-1.6-preview
-    - models/gemma-4-26b-a4b-it
-    - models/gemma-4-31b-it
-    - models/imagen-4.0-fast-generate-001
-    - models/imagen-4.0-generate-001
-    - models/imagen-4.0-ultra-generate-001
-    - models/lyria-3-clip-preview
-    - models/lyria-3-pro-preview
-    - models/nano-banana-pro-preview
-    - models/veo-2.0-generate-001
-    - models/veo-3.0-fast-generate-001
-    - models/veo-3.0-generate-001
-    - models/veo-3.1-fast-generate-preview
-    - models/veo-3.1-generate-preview
-    - models/veo-3.1-lite-generate-preview
+    - id: models/aqa
+    - id: models/deep-research-max-preview-04-2026
+    - id: models/deep-research-preview-04-2026
+    - id: models/deep-research-pro-preview-12-2025
+    - id: models/gemini-2.0-flash
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy fast model. Good, but 3.x is better.
+    - id: models/gemini-2.0-flash-001
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy fast model. Good, but 3.x is better.
+    - id: models/gemini-2.0-flash-lite
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Legacy ultra-cheap model.
+    - id: models/gemini-2.0-flash-lite-001
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Legacy ultra-cheap model.
+    - id: models/gemini-2.5-computer-use-preview-10-2025
+    - id: models/gemini-2.5-flash
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older fast model. Solid general performance.
+    - id: models/gemini-2.5-flash-image
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older fast vision model.
+    - id: models/gemini-2.5-flash-lite
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Older ultra-cheap model. Weak reasoning, only for simple tasks.
+    - id: models/gemini-2.5-flash-native-audio-latest
+    - id: models/gemini-2.5-flash-native-audio-preview-09-2025
+    - id: models/gemini-2.5-flash-native-audio-preview-12-2025
+    - id: models/gemini-2.5-flash-preview-tts
+    - id: models/gemini-2.5-pro
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship. Deep reasoning, but superseded by 3.x.
+    - id: models/gemini-2.5-pro-preview-tts
+    - id: models/gemini-3-flash-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Previous generation fast model. Good for general quick tasks.
+    - id: models/gemini-3-pro-image-preview
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Previous flagship optimized for image analysis.
+    - id: models/gemini-3-pro-preview
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Previous flagship. Strong reasoning, superseded by 3.1-pro.
+    - id: models/gemini-3.1-flash-image-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast vision model. Good for analyzing images quickly and cheaply.
+    - id: models/gemini-3.1-flash-lite-preview
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.1
+      description: Ultra-fast, very cheap. Good for simple classification or basic
+        extraction.
+    - id: models/gemini-3.1-flash-live-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast, balanced model optimized for low-latency live streaming/chat.
+    - id: models/gemini-3.1-flash-tts-preview
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Fast model optimized for Text-to-Speech workloads.
+    - id: models/gemini-3.1-pro-preview
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 12.0
+      description: Flagship. Deep reasoning, coding, and complex analysis. Expensive
+        but very strong.
+    - id: models/gemini-3.1-pro-preview-customtools
+    - id: models/gemini-embedding-001
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Legacy text embeddings.
+    - id: models/gemini-embedding-2
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Modern text embeddings. Best for semantic search.
+    - id: models/gemini-embedding-2-preview
+      pricing_per_1M_tokens:
+        input: 0.0
+        output: 0.0
+      description: Modern text embeddings. Best for semantic search.
+    - id: models/gemini-flash-latest
+    - id: models/gemini-flash-lite-latest
+    - id: models/gemini-pro-latest
+    - id: models/gemini-robotics-er-1.5-preview
+    - id: models/gemini-robotics-er-1.6-preview
+    - id: models/gemma-4-26b-a4b-it
+    - id: models/gemma-4-31b-it
+    - id: models/imagen-4.0-fast-generate-001
+    - id: models/imagen-4.0-generate-001
+    - id: models/imagen-4.0-ultra-generate-001
+    - id: models/lyria-3-clip-preview
+    - id: models/lyria-3-pro-preview
+    - id: models/nano-banana-pro-preview
+    - id: models/veo-2.0-generate-001
+    - id: models/veo-3.0-fast-generate-001
+    - id: models/veo-3.0-generate-001
+    - id: models/veo-3.1-fast-generate-preview
+    - id: models/veo-3.1-generate-preview
+    - id: models/veo-3.1-lite-generate-preview
   chatgpt:
     provider: openai
     model_count: 121
+    priced_count: 53
     models:
-    - babbage-002
-    - chat-latest
-    - chatgpt-image-latest
-    - dall-e-2
-    - dall-e-3
-    - davinci-002
-    - gpt-3.5-turbo
-    - gpt-3.5-turbo-0125
-    - gpt-3.5-turbo-1106
-    - gpt-3.5-turbo-16k
-    - gpt-3.5-turbo-instruct
-    - gpt-3.5-turbo-instruct-0914
-    - gpt-4
-    - gpt-4-0613
-    - gpt-4-turbo
-    - gpt-4-turbo-2024-04-09
-    - gpt-4.1
-    - gpt-4.1-2025-04-14
-    - gpt-4.1-mini
-    - gpt-4.1-mini-2025-04-14
-    - gpt-4.1-nano
-    - gpt-4.1-nano-2025-04-14
-    - gpt-4o
-    - gpt-4o-2024-05-13
-    - gpt-4o-2024-08-06
-    - gpt-4o-2024-11-20
-    - gpt-4o-audio-preview
-    - gpt-4o-audio-preview-2024-12-17
-    - gpt-4o-audio-preview-2025-06-03
-    - gpt-4o-mini
-    - gpt-4o-mini-2024-07-18
-    - gpt-4o-mini-audio-preview
-    - gpt-4o-mini-audio-preview-2024-12-17
-    - gpt-4o-mini-search-preview
-    - gpt-4o-mini-search-preview-2025-03-11
-    - gpt-4o-mini-transcribe
-    - gpt-4o-mini-transcribe-2025-03-20
-    - gpt-4o-mini-transcribe-2025-12-15
-    - gpt-4o-mini-tts
-    - gpt-4o-mini-tts-2025-03-20
-    - gpt-4o-mini-tts-2025-12-15
-    - gpt-4o-realtime-preview
-    - gpt-4o-search-preview
-    - gpt-4o-search-preview-2025-03-11
-    - gpt-4o-transcribe
-    - gpt-4o-transcribe-diarize
-    - gpt-5
-    - gpt-5-2025-08-07
-    - gpt-5-chat-latest
-    - gpt-5-codex
-    - gpt-5-mini
-    - gpt-5-mini-2025-08-07
-    - gpt-5-nano
-    - gpt-5-nano-2025-08-07
-    - gpt-5-pro
-    - gpt-5-pro-2025-10-06
-    - gpt-5-search-api
-    - gpt-5-search-api-2025-10-14
-    - gpt-5.1
-    - gpt-5.1-2025-11-13
-    - gpt-5.1-chat-latest
-    - gpt-5.1-codex
-    - gpt-5.1-codex-max
-    - gpt-5.1-codex-mini
-    - gpt-5.2
-    - gpt-5.2-2025-12-11
-    - gpt-5.2-chat-latest
-    - gpt-5.2-codex
-    - gpt-5.2-pro
-    - gpt-5.2-pro-2025-12-11
-    - gpt-5.3-chat-latest
-    - gpt-5.3-codex
-    - gpt-5.4
-    - gpt-5.4-2026-03-05
-    - gpt-5.4-mini
-    - gpt-5.4-mini-2026-03-17
-    - gpt-5.4-nano
-    - gpt-5.4-nano-2026-03-17
-    - gpt-5.4-pro
-    - gpt-5.4-pro-2026-03-05
-    - gpt-5.5
-    - gpt-5.5-2026-04-23
-    - gpt-5.5-pro
-    - gpt-5.5-pro-2026-04-23
-    - gpt-audio
-    - gpt-audio-1.5
-    - gpt-audio-2025-08-28
-    - gpt-audio-mini
-    - gpt-audio-mini-2025-10-06
-    - gpt-audio-mini-2025-12-15
-    - gpt-image-1
-    - gpt-image-1-mini
-    - gpt-image-1.5
-    - gpt-image-2
-    - gpt-image-2-2026-04-21
-    - gpt-realtime
-    - gpt-realtime-1.5
-    - gpt-realtime-2025-08-28
-    - gpt-realtime-mini
-    - gpt-realtime-mini-2025-10-06
-    - gpt-realtime-mini-2025-12-15
-    - o1
-    - o1-2024-12-17
-    - o3
-    - o3-2025-04-16
-    - o3-mini
-    - o3-mini-2025-01-31
-    - o4-mini
-    - o4-mini-2025-04-16
-    - omni-moderation-2024-09-26
-    - omni-moderation-latest
-    - sora-2
-    - sora-2-pro
-    - text-embedding-3-large
-    - text-embedding-3-small
-    - text-embedding-ada-002
-    - tts-1
-    - tts-1-1106
-    - tts-1-hd
-    - tts-1-hd-1106
-    - whisper-1
+    - id: babbage-002
+    - id: chat-latest
+    - id: chatgpt-image-latest
+    - id: dall-e-2
+    - id: dall-e-3
+    - id: davinci-002
+    - id: gpt-3.5-turbo
+      pricing_per_1M_tokens:
+        input: 0.5
+        output: 1.5
+      description: Legacy fast model. Use GPT-4o-mini or GPT-5-nano instead.
+    - id: gpt-3.5-turbo-0125
+    - id: gpt-3.5-turbo-1106
+    - id: gpt-3.5-turbo-16k
+    - id: gpt-3.5-turbo-instruct
+    - id: gpt-3.5-turbo-instruct-0914
+    - id: gpt-4
+      pricing_per_1M_tokens:
+        input: 30.0
+        output: 60.0
+      description: Original GPT-4. Very expensive and slow by modern standards.
+    - id: gpt-4-0613
+    - id: gpt-4-turbo
+      pricing_per_1M_tokens:
+        input: 10.0
+        output: 30.0
+      description: Legacy high-power model. Expensive.
+    - id: gpt-4-turbo-2024-04-09
+      pricing_per_1M_tokens:
+        input: 10.0
+        output: 30.0
+      description: Legacy high-power model. Expensive.
+    - id: gpt-4.1
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 8.0
+      description: Legacy flagship. Good, but superseded by GPT-5.
+    - id: gpt-4.1-2025-04-14
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 8.0
+      description: Legacy flagship. Good, but superseded by GPT-5.
+    - id: gpt-4.1-mini
+      pricing_per_1M_tokens:
+        input: 0.4
+        output: 1.6
+      description: Legacy compact model.
+    - id: gpt-4.1-mini-2025-04-14
+      pricing_per_1M_tokens:
+        input: 0.4
+        output: 1.6
+      description: Legacy compact model.
+    - id: gpt-4.1-nano
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy ultra-fast model.
+    - id: gpt-4.1-nano-2025-04-14
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.4
+      description: Legacy ultra-fast model.
+    - id: gpt-4o
+      pricing_per_1M_tokens:
+        input: 2.5
+        output: 10.0
+      description: Omni model. Excellent multimodal capabilities (text/vision/audio).
+    - id: gpt-4o-2024-05-13
+      pricing_per_1M_tokens:
+        input: 2.5
+        output: 10.0
+      description: Omni model. Excellent multimodal capabilities (text/vision/audio).
+    - id: gpt-4o-2024-08-06
+      pricing_per_1M_tokens:
+        input: 2.5
+        output: 10.0
+      description: Omni model. Excellent multimodal capabilities (text/vision/audio).
+    - id: gpt-4o-2024-11-20
+      pricing_per_1M_tokens:
+        input: 2.5
+        output: 10.0
+      description: Omni model. Excellent multimodal capabilities (text/vision/audio).
+    - id: gpt-4o-audio-preview
+    - id: gpt-4o-audio-preview-2024-12-17
+    - id: gpt-4o-audio-preview-2025-06-03
+    - id: gpt-4o-mini
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Compact Omni model. Very fast and cheap multimodal.
+    - id: gpt-4o-mini-2024-07-18
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Compact Omni model. Very fast and cheap multimodal.
+    - id: gpt-4o-mini-audio-preview
+    - id: gpt-4o-mini-audio-preview-2024-12-17
+    - id: gpt-4o-mini-search-preview
+    - id: gpt-4o-mini-search-preview-2025-03-11
+    - id: gpt-4o-mini-transcribe
+    - id: gpt-4o-mini-transcribe-2025-03-20
+    - id: gpt-4o-mini-transcribe-2025-12-15
+    - id: gpt-4o-mini-tts
+    - id: gpt-4o-mini-tts-2025-03-20
+    - id: gpt-4o-mini-tts-2025-12-15
+    - id: gpt-4o-realtime-preview
+    - id: gpt-4o-search-preview
+    - id: gpt-4o-search-preview-2025-03-11
+    - id: gpt-4o-transcribe
+    - id: gpt-4o-transcribe-diarize
+    - id: gpt-5
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: First generation GPT-5. Very strong, but newer versions are better.
+    - id: gpt-5-2025-08-07
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: First generation GPT-5. Very strong, but newer versions are better.
+    - id: gpt-5-chat-latest
+    - id: gpt-5-codex
+    - id: gpt-5-mini
+      pricing_per_1M_tokens:
+        input: 0.4
+        output: 1.6
+      description: Older compact model.
+    - id: gpt-5-mini-2025-08-07
+      pricing_per_1M_tokens:
+        input: 0.4
+        output: 1.6
+      description: Older compact model.
+    - id: gpt-5-nano
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older ultra-fast model.
+    - id: gpt-5-nano-2025-08-07
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Older ultra-fast model.
+    - id: gpt-5-pro
+      pricing_per_1M_tokens:
+        input: 3.0
+        output: 12.0
+      description: First generation GPT-5 Premium.
+    - id: gpt-5-pro-2025-10-06
+      pricing_per_1M_tokens:
+        input: 3.0
+        output: 12.0
+      description: First generation GPT-5 Premium.
+    - id: gpt-5-search-api
+    - id: gpt-5-search-api-2025-10-14
+    - id: gpt-5.1
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship model.
+    - id: gpt-5.1-2025-11-13
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship model.
+    - id: gpt-5.1-chat-latest
+    - id: gpt-5.1-codex
+    - id: gpt-5.1-codex-max
+    - id: gpt-5.1-codex-mini
+    - id: gpt-5.2
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship model.
+    - id: gpt-5.2-2025-12-11
+      pricing_per_1M_tokens:
+        input: 1.25
+        output: 10.0
+      description: Older flagship model.
+    - id: gpt-5.2-chat-latest
+    - id: gpt-5.2-codex
+    - id: gpt-5.2-pro
+      pricing_per_1M_tokens:
+        input: 3.0
+        output: 12.0
+      description: Older premium model.
+    - id: gpt-5.2-pro-2025-12-11
+      pricing_per_1M_tokens:
+        input: 3.0
+        output: 12.0
+      description: Older premium model.
+    - id: gpt-5.3-chat-latest
+    - id: gpt-5.3-codex
+    - id: gpt-5.4
+      pricing_per_1M_tokens:
+        input: 1.5
+        output: 8.0
+      description: Previous generation flagship. Excellent performance.
+    - id: gpt-5.4-2026-03-05
+      pricing_per_1M_tokens:
+        input: 1.5
+        output: 8.0
+      description: Previous generation flagship. Excellent performance.
+    - id: gpt-5.4-mini
+      pricing_per_1M_tokens:
+        input: 0.4
+        output: 1.6
+      description: Fast, highly capable compact model. Excellent balance of cost and
+        performance.
+    - id: gpt-5.4-mini-2026-03-17
+      pricing_per_1M_tokens:
+        input: 0.4
+        output: 1.6
+      description: Fast, highly capable compact model. Excellent balance of cost and
+        performance.
+    - id: gpt-5.4-nano
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Ultra-fast, very cheap. Best for high-volume simple tasks.
+    - id: gpt-5.4-nano-2026-03-17
+      pricing_per_1M_tokens:
+        input: 0.15
+        output: 0.6
+      description: Ultra-fast, very cheap. Best for high-volume simple tasks.
+    - id: gpt-5.4-pro
+      pricing_per_1M_tokens:
+        input: 4.0
+        output: 16.0
+      description: Previous generation premium model. Very strong.
+    - id: gpt-5.4-pro-2026-03-05
+      pricing_per_1M_tokens:
+        input: 4.0
+        output: 16.0
+      description: Previous generation premium model. Very strong.
+    - id: gpt-5.5
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 10.0
+      description: Flagship. State of the art reasoning, coding, and creative generation.
+    - id: gpt-5.5-2026-04-23
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 10.0
+      description: Flagship. State of the art reasoning, coding, and creative generation.
+    - id: gpt-5.5-pro
+      pricing_per_1M_tokens:
+        input: 5.0
+        output: 20.0
+      description: Premium Flagship. Extreme context length and deep analysis. Very
+        expensive.
+    - id: gpt-5.5-pro-2026-04-23
+      pricing_per_1M_tokens:
+        input: 5.0
+        output: 20.0
+      description: Premium Flagship. Extreme context length and deep analysis. Very
+        expensive.
+    - id: gpt-audio
+    - id: gpt-audio-1.5
+    - id: gpt-audio-2025-08-28
+    - id: gpt-audio-mini
+    - id: gpt-audio-mini-2025-10-06
+    - id: gpt-audio-mini-2025-12-15
+    - id: gpt-image-1
+    - id: gpt-image-1-mini
+    - id: gpt-image-1.5
+    - id: gpt-image-2
+    - id: gpt-image-2-2026-04-21
+    - id: gpt-realtime
+    - id: gpt-realtime-1.5
+    - id: gpt-realtime-2025-08-28
+    - id: gpt-realtime-mini
+    - id: gpt-realtime-mini-2025-10-06
+    - id: gpt-realtime-mini-2025-12-15
+    - id: o1
+      pricing_per_1M_tokens:
+        input: 15.0
+        output: 60.0
+      description: Original Deep Reasoning model. Very expensive, use o3 instead.
+    - id: o1-2024-12-17
+      pricing_per_1M_tokens:
+        input: 15.0
+        output: 60.0
+      description: Original Deep Reasoning model. Very expensive, use o3 instead.
+    - id: o3
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 8.0
+      description: Advanced Reasoning model. Best for math, logic, and deep problem
+        solving.
+    - id: o3-2025-04-16
+      pricing_per_1M_tokens:
+        input: 2.0
+        output: 8.0
+      description: Advanced Reasoning model. Best for math, logic, and deep problem
+        solving.
+    - id: o3-mini
+      pricing_per_1M_tokens:
+        input: 1.1
+        output: 4.4
+      description: Compact Reasoning model. Fast logic solving.
+    - id: o3-mini-2025-01-31
+      pricing_per_1M_tokens:
+        input: 1.1
+        output: 4.4
+      description: Compact Reasoning model. Fast logic solving.
+    - id: o4-mini
+      pricing_per_1M_tokens:
+        input: 1.1
+        output: 4.4
+      description: Latest Compact Reasoning model. Excellent logic solving at lower
+        cost.
+    - id: o4-mini-2025-04-16
+      pricing_per_1M_tokens:
+        input: 1.1
+        output: 4.4
+      description: Latest Compact Reasoning model. Excellent logic solving at lower
+        cost.
+    - id: omni-moderation-2024-09-26
+    - id: omni-moderation-latest
+    - id: sora-2
+    - id: sora-2-pro
+    - id: text-embedding-3-large
+      pricing_per_1M_tokens:
+        input: 0.13
+        output: 0.0
+      description: High-dimension text embeddings. Best quality semantic search.
+    - id: text-embedding-3-small
+      pricing_per_1M_tokens:
+        input: 0.02
+        output: 0.0
+      description: Low-dimension text embeddings. Very cheap, good quality.
+    - id: text-embedding-ada-002
+      pricing_per_1M_tokens:
+        input: 0.1
+        output: 0.0
+      description: Legacy text embeddings. Use embedding-3 instead.
+    - id: tts-1
+    - id: tts-1-1106
+    - id: tts-1-hd
+    - id: tts-1-hd-1106
+    - id: whisper-1

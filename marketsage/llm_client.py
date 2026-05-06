@@ -550,9 +550,11 @@ def refresh_available_models() -> Path:
     Query every profile in settings.yaml for available models and
     write the results to ``marketsage/available_models.yaml``.
 
+    Includes pricing (per 1M tokens) when known.
     Returns the path to the written file.
     """
     from datetime import datetime, timezone
+    from marketsage.model_pricing import get_model_info
 
     settings = _load_settings()
     profiles = settings.get("llm_profiles", {})
@@ -584,10 +586,26 @@ def refresh_available_models() -> Path:
                 models = [f"ERROR: {exc}"]
                 seen_keys[cache_key] = models
 
+        # Build model entries with pricing and description
+        model_entries = []
+        for m in models:
+            entry: dict[str, Any] = {"id": m}
+            info = get_model_info(m)
+            if info:
+                entry["pricing_per_1M_tokens"] = {
+                    "input": info["input"],
+                    "output": info["output"]
+                }
+                if info.get("description"):
+                    entry["description"] = info["description"]
+            model_entries.append(entry)
+
+        priced = sum(1 for e in model_entries if "pricing_per_1M_tokens" in e)
         output["profiles"][name] = {
             "provider": provider,
             "model_count": len(models),
-            "models": models,
+            "priced_count": priced,
+            "models": model_entries,
         }
 
     out_path = Path(__file__).parent / "available_models.yaml"
