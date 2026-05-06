@@ -54,16 +54,21 @@ class GeminiClient(BaseLLMClient):
         text_parts: list[str] = []
         tool_calls: list[ToolCall] = []
 
-        for part in candidate.content.parts:
-            if part.function_call:
-                fc = part.function_call
-                tool_calls.append(ToolCall(
-                    id=fc.id or "",
-                    name=fc.name,
-                    args=dict(fc.args) if fc.args else {},
-                ))
-            elif part.text:
-                text_parts.append(part.text)
+        if candidate.content and getattr(candidate.content, "parts", None):
+            for part in candidate.content.parts:
+                if part.function_call:
+                    fc = part.function_call
+                    tool_calls.append(ToolCall(
+                        id=fc.id or "",
+                        name=fc.name,
+                        args=dict(fc.args) if fc.args else {},
+                    ))
+                elif part.text:
+                    text_parts.append(part.text)
+        else:
+            reason = getattr(candidate, "finish_reason", "UNKNOWN")
+            logger.warning("Gemini response empty. Finish reason: %s", reason)
+            text_parts.append(f"[No content returned. Finish reason: {reason}]")
 
         usage = getattr(raw, "usage_metadata", None)
         inp = getattr(usage, "prompt_token_count", 0) or 0 if usage else 0
