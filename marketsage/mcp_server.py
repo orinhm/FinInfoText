@@ -50,36 +50,47 @@ def _register_tool(decl: dict[str, Any]) -> None:
     props = decl.get("parameters", {}).get("properties", {})
     required = decl.get("parameters", {}).get("required", [])
 
-    # Build the parameter annotations for the wrapper function
-    param_info = {}
-    for pname, pschema in props.items():
-        ptype = pschema.get("type", "string")
-        pdesc = pschema.get("description", "")
-        is_required = pname in required
-        param_info[pname] = {
-            "type": ptype,
-            "description": pdesc,
-            "required": is_required,
-        }
-
-    # Create a closure that calls execute_tool
-    def _make_handler(tool_name: str, params: dict):
+    # Create a closure that calls execute_tool, passing all kwargs through
+    def _make_handler(tool_name: str):
         async def handler(**kwargs) -> str:
-            # Convert empty strings to missing for optional params
+            # Keep all args — don't strip required params
             clean_args = {
                 k: v for k, v in kwargs.items()
-                if v is not None and v != ""
+                if v is not None
             }
             logger.info("MCP tool call: %s(%s)", tool_name, clean_args)
             result = execute_tool(tool_name, clean_args)
             return result
         handler.__name__ = tool_name
         handler.__doc__ = description
+
+        # Build parameter annotations so MCP knows what to expect
+        annotations = {}
+        defaults = {}
+        for pname, pschema in props.items():
+            ptype = pschema.get("type", "string")
+            if ptype == "integer":
+                annotations[pname] = int
+            elif ptype == "boolean":
+                annotations[pname] = bool
+            else:
+                annotations[pname] = str
+            # Only set defaults for optional params
+            if pname not in required:
+                if ptype == "integer":
+                    defaults[pname] = 0
+                elif ptype == "boolean":
+                    defaults[pname] = False
+                else:
+                    defaults[pname] = ""
+        annotations["return"] = str
+        handler.__annotations__ = annotations
+        handler.__defaults__ = tuple(defaults.values()) if defaults else None
         return handler
 
-    handler = _make_handler(name, param_info)
+    handler = _make_handler(name)
 
-    # Register with FastMCP using the decorator-free API
+    # Register with FastMCP
     mcp.tool(name=name, description=description)(handler)
 
 
