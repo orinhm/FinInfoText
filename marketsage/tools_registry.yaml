@@ -1,0 +1,268 @@
+last_updated: '2026-05-07T16:33:33.063492+00:00'
+tool_count: 24
+by_type:
+  built-in: 16
+  custom_scraper: 1
+  generated: 7
+tools:
+- name: fetch_ceo_ca
+  type: built-in
+  description: Fetch discussion posts (spiels) from CEO.CA forum channels. Use this when the user mentions CEO.CA, message
+    boards, retail sentiment, or community discussions for a specific ticker. The channel is typically the ticker symbol in
+    lowercase (e.g. 'nfg', 'tsla').
+  parameters:
+  - channel
+  - days_back
+  required_params:
+  - channel
+- name: fetch_yahoo_finance
+  type: built-in
+  description: 'Fetch comprehensive stock/equity data from Yahoo Finance: price history, company info, key financials, news
+    headlines, and analyst recommendations. Works for any ticker supported by Yahoo Finance globally (e.g. ''NFGC.V'', ''TSLA'',
+    ''AAPL'', ''GOLD'').'
+  parameters:
+  - ticker
+  - days_back
+  required_params:
+  - ticker
+- name: fetch_fred
+  type: built-in
+  description: 'Fetch macroeconomic data from FRED (Federal Reserve Economic Data). Covers 800,000+ series: GDP, CPI, unemployment,
+    interest rates, gold price, oil price, housing, and more. You can specify series by common name (e.g. ''cpi'', ''gold_price'',
+    ''fed_funds'', ''unemployment'') or by FRED ID (e.g. ''CPIAUCSL''). Alternatively, provide a search query to find relevant
+    series.'
+  parameters:
+  - series
+  - query
+  - days_back
+  required_params: []
+- name: fetch_nfg_news
+  type: built-in
+  description: Fetch NewFoundGold Corp official news releases and press coverage.
+  parameters:
+  - days_back
+  required_params: []
+- name: fetch_web_news
+  type: built-in
+  description: Fetch news articles from any website URL. Use for mining.com, kitco, reuters, seekingalpha, etc.
+  parameters:
+  - url
+  - query
+  - days_back
+  - max_articles
+  required_params:
+  - url
+- name: read_knowledge
+  type: built-in
+  description: Read any file from the knowledge tree. Works for sector files, asset files, agent prompts, and learnings.
+  parameters:
+  - path
+  required_params:
+  - path
+- name: list_knowledge
+  type: built-in
+  description: List files and subdirectories in a knowledge directory. Use this to discover what sectors, agents, and data
+    exist.
+  parameters:
+  - path
+  required_params: []
+- name: persist_learning
+  type: built-in
+  description: Persist a new piece of knowledge learned during analysis. Appends a timestamped learning to the specified file
+    in the knowledge tree. Be selective — only persist genuinely new insights.
+  parameters:
+  - text
+  - target_path
+  required_params:
+  - text
+  - target_path
+- name: list_available_scrapers
+  type: built-in
+  description: List all available data scrapers. Returns their names and brief descriptions.
+  parameters: []
+  required_params: []
+- name: load_agent
+  type: built-in
+  description: Load and compose a specialist agent persona. Combines the base role framework (from agents/) with sector-specific
+    specialization and cross-sector inherited knowledge. Returns the full agent prompt with all accumulated knowledge.
+  parameters:
+  - role
+  - sector_path
+  required_params:
+  - role
+- name: create_custom_scraper
+  type: built-in
+  description: Create a new reusable web scraper tool with preset URL/params.
+  parameters:
+  - name
+  - description
+  - base_url
+  - default_query
+  - default_days_back
+  - default_max_articles
+  required_params:
+  - name
+  - description
+  - base_url
+- name: propose_new_tool
+  type: built-in
+  description: Propose a new tool that requires custom implementation.
+  parameters:
+  - tool_name
+  - description
+  - data_source
+  - parameters_needed
+  - rationale
+  required_params:
+  - tool_name
+  - description
+  - data_source
+  - rationale
+- name: create_sector_agent
+  type: built-in
+  description: 'Create a new sector-specialized agent under a sector''s agents/ dir. Example: create_sector_agent(sector_path=''equities/fintech'',
+    role=''accountant'', ...)'
+  parameters:
+  - sector_path
+  - role
+  - sector_description
+  - key_metrics
+  - inherits_from
+  required_params:
+  - sector_path
+  - role
+  - sector_description
+- name: create_sector
+  type: built-in
+  description: 'Create a new sector or sub-sector directory with sector.md and agents/ dir. Use this when you discover a new
+    domain that needs its own branch in the knowledge tree. Example: create_sector(sector_path=''equities/biotech'', title=''Biotechnology'',
+    ...)'
+  parameters:
+  - sector_path
+  - title
+  - description
+  - inherits
+  required_params:
+  - sector_path
+  - title
+  - description
+- name: propose_prompt_change
+  type: built-in
+  description: Propose a change to an agent's prompt.md file. The proposal is saved for human review via 'python -m marketsage.admin'.
+    Do NOT modify prompt.md directly — always use this tool for prompt evolution. Changes will be applied by an admin after
+    review.
+  parameters:
+  - target_prompt
+  - change_type
+  - proposed_content
+  - reasoning
+  - proposed_by
+  required_params:
+  - target_prompt
+  - change_type
+  - proposed_content
+  - reasoning
+- name: read_sector_context
+  type: built-in
+  description: Load ALL available knowledge about a sector in one call. Returns sector files, asset knowledge, available agent
+    roles, and relevant scrapers. Use this EARLY in analysis.
+  parameters:
+  - sector
+  required_params:
+  - sector
+- name: fetch_mining_com_lithium
+  type: custom_scraper
+  description: Scrapes lithium-related news articles from mining.com. Useful for tracking global lithium projects, refining,
+    and EV battery supply chains.
+  parameters:
+  - query
+  - days_back
+  - max_articles
+  required_params: []
+  created_at: '2026-04-28T21:17:00.424434+00:00'
+- name: fetch_cme_ag_futures
+  type: generated
+  description: Fetch real-time and historical futures contract data for agricultural commodities (e.g., Wheat, Corn, Soybeans),
+    including term structure and open interest.
+  parameters:
+  - commodity_symbol
+  - contract_month
+  - data_type
+  required_params:
+  - commodity_symbol
+  - contract_month
+  - data_type
+  created_at: '2026-04-29T04:36:15.851714+00:00'
+- name: fetch_coingecko_market_data
+  type: generated
+  description: Fetch comprehensive cryptocurrency market data, prices, market cap, and trading volume from CoinGecko API.
+  parameters:
+  - coin_id
+  - vs_currency
+  - days
+  required_params:
+  - coin_id
+  - vs_currency
+  - days
+  created_at: '2026-04-29T04:08:04.303867+00:00'
+- name: fetch_global_election_calendar
+  type: generated
+  description: A tool to fetch a calendar of upcoming national elections, including country, election type (presidential/parliamentary),
+    date, and incumbent party.
+  parameters:
+  - year
+  - region
+  required_params:
+  - year
+  - region
+  created_at: '2026-05-03T14:38:57.096239+00:00'
+- name: fetch_lithium_spot_prices
+  type: generated
+  description: Fetches global spot prices for Lithium Carbonate and Spodumene, which are critical for valuing lithium mining
+    companies.
+  parameters:
+  - commodity_type
+  - currency
+  - days_back
+  required_params:
+  - commodity_type
+  - currency
+  - days_back
+  created_at: '2026-04-28T21:18:09.967578+00:00'
+- name: fetch_onchain_metrics
+  type: generated
+  description: Fetch on-chain metrics like active addresses, transaction volume, hash rate, and exchange flows.
+  parameters:
+  - asset
+  - metric
+  - resolution
+  - days_back
+  required_params:
+  - asset
+  - metric
+  - resolution
+  - days_back
+  created_at: '2026-04-29T04:08:57.714494+00:00'
+- name: fetch_tse_data
+  type: generated
+  description: Fetch detailed stock and market data directly from the Tokyo Stock Exchange, including local disclosures, institutional
+    flows, and market breadth.
+  parameters:
+  - ticker
+  - data_type
+  - days_back
+  required_params:
+  - ticker
+  - data_type
+  - days_back
+  created_at: '2026-04-29T04:43:44.309077+00:00'
+- name: fetch_uranium_prices
+  type: generated
+  description: Fetch daily and weekly U3O8 (uranium) spot and long-term contract prices.
+  parameters:
+  - days_back
+  - price_type
+  required_params:
+  - days_back
+  - price_type
+  created_at: '2026-04-29T04:40:26.034323+00:00'

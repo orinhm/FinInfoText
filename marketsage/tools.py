@@ -1343,3 +1343,99 @@ def execute_tool(name: str, args: dict[str, Any]) -> str:
     except Exception as exc:
         logger.error("  ✗ Tool '%s' failed: %s", name, exc, exc_info=True)
         return f"(Error executing {name}: {type(exc).__name__}: {exc})"
+
+
+# ---------------------------------------------------------------------------
+# Tools registry generator
+# ---------------------------------------------------------------------------
+
+def refresh_tools_registry() -> Path:
+    """
+    Generate ``marketsage/tools_registry.yaml`` containing every tool
+    currently available in the system (built-in + custom + generated).
+
+    Each entry includes: name, description, type, parameters, and timestamp.
+    Returns the path to the written file.
+    """
+    import yaml
+    from datetime import datetime, timezone
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Gather all declarations
+    all_decls = get_all_tool_declarations()
+    builtin_names = {t["name"] for t in TOOL_DECLARATIONS}
+    custom_names = {t["name"] for t in _load_custom_scrapers()}
+    # Everything else is generated
+
+    entries = []
+    for decl in all_decls:
+        name = decl["name"]
+
+        # Determine source type
+        if name in builtin_names:
+            tool_type = "built-in"
+        elif name in custom_names:
+            tool_type = "custom_scraper"
+        else:
+            tool_type = "generated"
+
+        # Get parameter names
+        props = decl.get("parameters", {}).get("properties", {})
+        params = list(props.keys()) if props else []
+        required = decl.get("parameters", {}).get("required", [])
+
+        # Timestamp: for generated tools, read from the JSON manifest
+        timestamp = None
+        if tool_type == "generated":
+            json_path = Path(__file__).parent / "generated_tools" / f"{name}.json"
+            if json_path.exists():
+                try:
+                    manifest = json.loads(json_path.read_text(encoding="utf-8"))
+                    timestamp = manifest.get("metadata", {}).get("generated_at")
+                except Exception:
+                    pass
+        elif tool_type == "custom_scraper":
+            cfg_path = _CUSTOM_SCRAPERS_DIR / f"{name}.json"
+            if cfg_path.exists():
+                try:
+                    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+                    timestamp = cfg.get("created_at")
+                except Exception:
+                    pass
+
+        entry: dict[str, Any] = {
+            "name": name,
+            "type": tool_type,
+            "description": decl.get("description", "(no description)"),
+            "parameters": params,
+            "required_params": required,
+        }
+        if timestamp:
+            entry["created_at"] = timestamp
+
+        entries.append(entry)
+
+    output = {
+        "last_updated": now,
+        "tool_count": len(entries),
+        "by_type": {
+            "built-in": sum(1 for e in entries if e["type"] == "built-in"),
+            "custom_scraper": sum(1 for e in entries if e["type"] == "custom_scraper"),
+            "generated": sum(1 for e in entries if e["type"] == "generated"),
+        },
+        "tools": entries,
+    }
+
+    out_path = Path(__file__).parent / "tools_registry.yaml"
+    with open(out_path, "w", encoding="utf-8") as f:
+        yaml.dump(output, f, default_flow_style=False, sort_keys=False,
+                  allow_unicode=True, width=120)
+
+    return out_path
+
+
+if __name__ == "__main__":
+    path = refresh_tools_registry()
+    print(f"✓ Written to {path}")
+

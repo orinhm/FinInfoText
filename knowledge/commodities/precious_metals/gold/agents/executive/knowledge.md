@@ -1,8 +1,7 @@
 ---
-last_modified: '2026-04-28T04:15:41.905071+00:00'
-revision: 24
-summary: 'Learning from executive/gold: Gold prices easing concurrently with a weakening
-  U.S. dollar'
+last_modified: '2026-05-06T10:11:21.680256+00:00'
+revision: 25
+summary: 'Learning: Acquiring existing mills and permitted infrastructure (e.g.,'
 type: knowledge
 ---
 # Learnings
@@ -104,3 +103,5 @@ type: knowledge
 - Great Bear Resources: discovered Red Lake deposit, acquired by Kinross during Orphan Period ($1.8B, no MRE)
 - Pretium Resources: Brucejack discovery → Orphan → Production → acquired by Newcrest
 - Fosterville (Kirkland Lake Gold): high-grade orogenic → production → re-rated spectacularly
+
+- [2026-05-06] Acquiring existing mills and permitted infrastructure (e.g., Pine Cove Mill) is a highly strategic move for junior gold miners, enabling them to bypass 3-5 years of greenfield permitting and significantly accelerate the path to production, often through a 'Hub and Spoke' operational model.

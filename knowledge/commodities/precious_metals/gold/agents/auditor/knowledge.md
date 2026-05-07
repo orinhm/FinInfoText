@@ -1,8 +1,7 @@
 ---
-last_modified: '2026-04-27T19:19:54.481797+00:00'
-revision: 8
-summary: 'Learning from auditor/geologist: A high Current Ratio (e.g., >3.5) in exploration-stage
-  miner'
+last_modified: '2026-05-06T10:11:21.687222+00:00'
+revision: 9
+summary: 'Learning: Permitting is the most significant de-risking factor in gold'
 type: knowledge
 ---
 # Learnings
@@ -54,3 +53,5 @@ type: knowledge
 - Go deep (>1 km is common)
 - Grade often increases with depth
 - Key examples: Fosterville, Magino, Queensway
+
+- [2026-05-06] Permitting is the most significant de-risking factor in gold mining project development. The appointment of politically connected individuals to the board (e.g., former Premiers) can significantly aid in navigating regulatory hurdles and fast-tracking approvals in Tier-1 jurisdictions.
