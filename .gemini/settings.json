@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "marketsage": {
+      "command": "/home/ori/projects/FinInfoText/venv/bin/python",
+      "args": ["-m", "marketsage.mcp_server"],
+      "cwd": "/home/ori/projects/FinInfoText"
+    }
+  }
+}
