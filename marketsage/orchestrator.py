@@ -333,9 +333,13 @@ class Orchestrator:
         logger.info("▸ Starting tool-based analysis...")
         logger.info("═" * 70)
 
+        from marketsage.tools import get_all_tool_declarations, execute_tool
+
         result = self.llm.chat_with_tools(
             system_prompt=system_prompt,
             user_message=user_request,
+            tool_declarations=get_all_tool_declarations(),
+            tool_executor=lambda name, args: execute_tool(name, args),
             run_dir=self.run_dir,
         )
 
@@ -479,9 +483,19 @@ def main() -> None:
                 give also for each month a summary of major disagreements amongst the message board participants
                             """
         request = """
-                    look at gold mining stock message boards in ceo.ca (NFGC, Kinross, Alamos... whatever other stocks) over the last 2 years.
+                    look at gold mining stock message boards in ceo.ca (NFGC, Kinross, Alamos... whatever other stocks) over the last 1 year.
                     try to learn everything you can about the mining business, pitfalls processes in mining and finance and whatever category 
                     you can learn
+                    """
+        request = """
+                    give me a detailed analysis of the tech industry for the past 10 years.
+                    I want to see trend changes in the industry, new technologies, new companies, how thd old companies adapted, and whatever else you think is
+                    useful. tale the time to think for yourself what would regard as useful 
+                    """
+        request = """
+                    today is may 7th 2026.
+                    give me an detailed long and in depth overview on the global defence industry. what has changed major companies and countries
+                    in the defense industry and interesting companies you think an inverstor hsould buy stock in 
                     """
     orchestrator = Orchestrator(run_dir=run_dir)
     result = orchestrator.run(request)

@@ -1,7 +1,7 @@
 ---
-last_modified: '2026-05-06T10:11:21.672860+00:00'
-revision: 7
-summary: 'Learning: The ''Orphan Period'' of the Lassonde Curve is a predictable p'
+last_modified: '2026-05-06T10:11:21.689035+00:00'
+revision: 8
+summary: 'Learning: Geopolitical events (e.g., wars, central bank actions, de-do'
 type: vault
 ---
 # Gold Mining Sector
@@ -27,3 +27,5 @@ type: vault
 - [2026-05-05] Contingent Value Rights (CVRs) in mining M&A (e.g., Kinross acquiring Great Bear) act as a highly volatile, highly leveraged instrument for retail investors. While they offer massive upside if commercial production/resource thresholds are met, they carry expiration risks, no voting rights, no dividends, and often suffer from severe illiquidity and margin restrictions, making them a double-edged sword.
 
 - [2026-05-06] The 'Orphan Period' of the Lassonde Curve is a predictable phase for junior gold developers, characterized by investor frustration and stagnant stock prices despite ongoing de-risking and positive drill results. This often precedes a re-rating as projects move towards development and production.
+
+- [2026-05-06] Geopolitical events (e.g., wars, central bank actions, de-dollarization efforts) are primary and often overriding catalysts for gold price movements. These macro factors can significantly impact gold mining stock valuations, sometimes decoupling them from company-specific news in the short term.

@@ -1,9 +1,9 @@
 ---
 inherits:
 - commodities/precious_metals
-last_modified: '2026-05-04T11:18:58.919478+00:00'
-revision: 3
-summary: 'Learning: The planned IPO of Barrick''s North American unit (estimated '
+last_modified: '2026-05-06T09:36:52.666697+00:00'
+revision: 4
+summary: "Learning: \n## Gold Mining Business: Processes & Stages (Learnings from"
 type: knowledge
 ---
 # Mining Equities — Sector Intelligence
@@ -90,3 +90,30 @@ alongside equity analysis frameworks.
 - Majors with depleting reserves and record cash flow are actively shopping
 - Assets with permitted, near-production deposits are premium targets
 - Key metric: in-situ value per ounce vs. acquisition price per ounce
+
+- [2026-05-06] 
+## Gold Mining Business: Processes & Stages (Learnings from CEO.CA Boards)
+
+**1. Exploration & Discovery:**
+*   **Drilling Results:** High-grade drill intercepts (e.g., "bonanza grades," "1000 gram-meter intercepts") are primary catalysts, driving initial hype and speculative buying. Gram-meter product (grade x width) is a key metric.
+*   **Resource Estimates (MRE):** Initial MREs are often viewed critically, with investors expecting significant upgrades based on ongoing infill drilling. The market "hangs on to a huge upgrade in the MRE" to move inferred resources to indicated.
+*   **Geological Potential:** Discussions focus on "ounces in the ground" potential, with speculation on multi-million-ounce deposits and the continuity/depth extensions of mineralization (e.g., "Fosterville-style" orogenic deposits).
+
+**2. Development & Permitting:**
+*   **Feasibility Studies (PEA/PFS/FS):** Preliminary Economic Assessments (PEAs) are often seen as conservative or "sandbagged," especially if using lower gold price assumptions. Transition to PFS/FS is a de-risking step.
+*   **Infrastructure Acquisition:** Acquiring existing mills (e.g., Pine Cove Mill) and brownfield infrastructure is a "strategic shortcut" to bypass 3-5 years of permitting, accelerating the path to production. This "Hub and Spoke" model is highly valued.
+*   **Capital Expenditure (CAPEX):** Development is capital-intensive. "One-and-Done" financing packages that fully cover construction costs are critical to avoid "dilution overhang."
+*   **Permitting:** A major bottleneck and source of frustration. Delays in environmental permits are a significant risk. Strategic board appointments (former government officials) are seen as a "Permitting Masterstroke" to accelerate approvals.
+
+**3. Operations & Production:**
+*   **Production Ramp-up:** Achieving commercial production and consistent output (annual gold equivalent ounces) are key milestones.
+*   **Cost Management (AISC):** All-In Sustaining Costs (AISC) are a critical metric. Investors aim for AISC below $1,000-$1,200/oz, understanding that development-stage AISC can be higher. Higher grades are crucial for better margins due to relatively fixed processing costs.
+*   **Grade Control:** High-density grade control drilling (e.g., 5x5m spacing) is a technical defense against skepticism regarding mineralization continuity in "nuggety" deposits.
+*   **Mill Operations:** Discussions cover mill capacity (tonnes per day), processing methods (e.g., gravity-CIL), and the impact of ore sorters on improving feed grade and reducing transport costs.
+
+**4. Processing & Metallurgy:**
+*   While less detailed, discussions touch on ore processing methods, recovery rates, and metallurgical challenges, particularly in the context of mill upgrades and acquisitions.
+
+**5. Mine Closure & Reclamation:**
+*   This stage is rarely discussed on message boards, indicating a primary focus on discovery, development, and production.
+
